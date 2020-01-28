@@ -1,0 +1,18 @@
+#+TITLE: Blogger Bust Python Project: Lexicomb
+#+AUTHOR: BloggerBust
+#+DESCRIPTION: A place for me to store python code that I might want to blog about
+#+STARTUP: showeverything
+
+* Introduction
+I will be adding some details here soon...
+
+* How to install it
+
+* Example Usage
+
+* How to setup a developer environment
+
+* How to contribute
+
+* License
+[[file:LICENSE-2.0.txt][Apache License v2.0]]
