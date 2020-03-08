@@ -35,7 +35,7 @@ class TagStatement(Statement):
     def _eval(self, frame):
         return_value = None
         new_frame = {}
-        argument_names = self._push_arguments_on_frame(new_frame)
+        argument_names = self._push_arguments_on_frame(frame, new_frame)
         new_frame = self._push_hash_table_from_results_frame_onto_new_frame(frame, new_frame)
         self._set_is_unwinding(frame, False)
         self._push_frame_onto_call_stack(frame, new_frame)
@@ -90,25 +90,27 @@ class TagStatement(Statement):
     def _pop_frame_from_call_stack(cls, frame):
         return frame[cls.CALL_STACK_KEY].pop()
 
-    def _push_arguments_on_frame(self, frame):
+    def _push_arguments_on_frame(self, previous_frame, next_frame):
         argument_names = []
         argument_values = []
         index = 0
         for tag in self._rest:
             argument_name = f"arg{index}"
             if type(tag) is Access:
-                frame[f"arg{index}"] = f"{tag.name}"
-
+                if tag.name in previous_frame:
+                    next_frame[f"arg{index}"] = previous_frame[tag.name]
+                else:
+                    next_frame[f"arg{index}"] = tag.name
             elif type(tag) is RealNumber:
-                frame[f"arg{index}"] = tag.value
+                next_frame[f"arg{index}"] = tag.value
             else:
                 raise LexicombValueError(tag, "tag", f"unsupported argument type = {type(tag)}")
 
-            argument_values.append(frame[argument_name])
+            argument_values.append(next_frame[argument_name])
             index += 1
             argument_names.append(argument_name)
 
-        frame["args"] = argument_values
+        next_frame["args"] = argument_values
 
         return argument_names
 
