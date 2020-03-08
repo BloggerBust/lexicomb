@@ -17,6 +17,8 @@ class ConditionalRepeat(Statement):
             if self._get_is_unwinding(frame):
                 result_value = next_value
                 break
+        else:
+            result_value = self._conditional_block.eval(frame)
 
         return result_value
 
