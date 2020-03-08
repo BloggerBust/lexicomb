@@ -138,5 +138,5 @@ class LexicombIocContainer(containers.DeclarativeContainer):
         context_service=common_ioc.context_service_provider,
     )
 
-    build = providers.Callable(bootstrap_container, config=config_provider,
+    build = providers.Callable(bootstrap_container, config=config,
                                logger=logging_provider, common_ioc=common_ioc, combinator_ioc=combinator_ioc)
