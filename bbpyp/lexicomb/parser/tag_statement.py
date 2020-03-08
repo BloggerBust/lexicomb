@@ -1,5 +1,6 @@
 from os import path
 from copy import deepcopy
+from bbpyp.lexicomb.parser.exception.lexicomb_value_error import LexicombValueError
 from bbpyp.lexicomb.parser.statement import Statement
 from bbpyp.lexicomb.parser.real_number import RealNumber
 from bbpyp.lexicomb.parser.access import Access
@@ -101,7 +102,7 @@ class TagStatement(Statement):
             elif type(tag) is RealNumber:
                 frame[f"arg{index}"] = tag.value
             else:
-                raise Exception(f"unsupported argument tag type = {type(tag)}")
+                raise LexicombValueError(tag, "tag", f"unsupported argument type = {type(tag)}")
 
             argument_values.append(frame[argument_name])
             index += 1
