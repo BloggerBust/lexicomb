@@ -86,6 +86,8 @@ class Parser(AbstractParser):
         self._statement_sequence = self._create_statement_sequence()
         self._statement_block = self._create_statement_block()
 
+        self._parser = self.statement_block | self.statement
+
     def __repr__(self):
         # return f"<{type(self).__module__}.{type(self).__name__} object at {hex(id(self))}>()"
         return f"{type(self).__name__}()"
@@ -103,7 +105,7 @@ class Parser(AbstractParser):
                              source_format_service=self._source_format_service)
 
         try:
-            result = self.statement_block(tokens, position)
+            result = self._parser(tokens, position)
         except Exception as e:
             raise_error(e)
 
