@@ -2,6 +2,7 @@ import logging
 from os import linesep
 from dependency_injector import containers, providers
 
+from bbpyp.__nspkg_meta__ import __version__
 from bbpyp.common.util.ioc_util import IocUtil
 from bbpyp.abstract_parser.model.indent_delta import IndentDelta
 from bbpyp.lexicomb_engine.model.topic import Topic
