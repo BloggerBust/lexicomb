@@ -447,9 +447,6 @@ class TestParser(unittest.TestCase):
                                                    ]), self._create_statement_block([
                                                        self._create_assignment_statement("z", "5")
                                                    ])))),
-            #             ("? 1 < 2 { x := 1; }@? 2 < 3 { y := 3; }{ z := 5; }", self._create_conditional_block(self._create_binary_operator("<", "1", "2"), self._create_statement_block([self._create_assignment_statement("x", "1")]), self._create_conditional_repeat_block(self._create_binary_operator("<", "2", "3"),
-            # self._create_statement_block([self._create_assignment_statement("y", "3")]),
-            # self._create_statement_block([self._create_assignment_statement("z", "5")]))))
 
         ]
 
@@ -633,6 +630,54 @@ class TestParser(unittest.TestCase):
         ]
         self._evaluate(self._helper.lexicomb_parser, cases)
 
+    def test_interpreter_returning_result_object(self):
+        cases = [
+            ("""
+            {
+            a:=42;
+            ?a=42{
+              return a;
+            };
+
+            a:=5/0;
+            return a;
+            }""", self._create_result(42)),
+            ("""
+            {
+              x := 1;
+              step := 2;
+              y := 10;
+
+              @? x < y {
+                x := x + step;
+                ?x=(y-step+1){
+                    return x;
+                };
+              }
+              return y;
+            }
+            """, self._create_result(9)),
+
+            ("""
+            {
+              return ReturnArgument foo;
+            }
+
+            """, self._create_result("foo")),
+
+            ("""{
+              Register Nichola Wilson;
+              Excercise Nichola situps 10 07:15 07:45;
+              Excercise Nichola situps 10 07:05 07:35;
+              Excercise Nichola situps 10 07:00 07:15;
+              Excercise Nichola pushups 20 07:00 07:15;
+            }
+            """, self._create_result({'Register': {'Nichola': {}}, 'Excercise': {'Nichola': {'situps': {'0': 3, '1': 30, '2': 1.25, '3': 0.4166666666666667}, 'pushups': {'0': 1, '1': 20, '2': 0.25, '3': 0.25}}}})),
+
+        ]
+
+        self._interpret(self._helper.lexicomb_parser, cases, Interpret.RETURN_RESULT)
+
     def test_interpreter_returning_frame(self):
         cases = [
             ("""
@@ -679,12 +724,20 @@ class TestParser(unittest.TestCase):
               }
             }
             """, {"$is_unwinding": False, "x": 11, "step": 2, "y": 10}),
-            # ("""
-            # {
-            #   x:=1;
-            #   return;
-            # }
-            # """, {"$is_unwinding": True, "x": 1}),
+            ("""
+            {
+              x:=1;
+              return;
+            }
+            """, {"$is_unwinding": True, "x": 1}),
+            ("""
+            {
+              has_arg0 := [arg0];
+              has_arg1 := [arg1];
+              is_arg1_undefined := ![arg1];
+              does_arg0_have_deep_property := [arg0[property][deep_property][2]];
+            }
+            """, {"$is_unwinding": False, "arg0": 0, "has_arg0": True, "has_arg1": False, "is_arg1_undefined": True, "does_arg0_have_deep_property": False}, {"arg0": 0}),
             ("""
             {
               ? [arg0] {
@@ -803,7 +856,7 @@ class TestParser(unittest.TestCase):
               x:= 1 + 2 + 3;
               return Concat Trevor Wilson x;
             }
-            """, "TrevorWilsonx"),
+            """, "TrevorWilson6"),
 
             ("""{
               x:= 1+2+3;
@@ -818,13 +871,13 @@ class TestParser(unittest.TestCase):
             """, 6),
 
             ("""{
-              ConcatWithSpaces 1 2 3 4 5 6 Trevor Wilson;
-              return ConcatWithSpaces 1 2 3 Trevor Wilson;
+              CreateString 1 2 3 4 5 6 Trevor Wilson;
+              return CreateString 1 2 3 Trevor Wilson;
             }
             """, "6Trevor Wilson"),
 
             ("""{
-              return ConcatWithSpaces Trevor Wilson 1 2 3;
+              return CreateString Trevor Wilson 1 2 3;
             }
             """, "Trevor Wilson 1 2 3"),
 
@@ -837,40 +890,160 @@ class TestParser(unittest.TestCase):
             }
             """, None),
 
+            ##############################################
+            # Testing the behavior of conditional blocks #
+            ##############################################
+
             ("""
             {
-              x:= ReturnNothing Foo;
-              ? x{
-                return ConcatWithSpaces x is truthy;
-              }{
-                return ConcatWithSpaces x is falsy;
+              truthy := 1=1;
+              falsey := !truthy;
+              result := CreateString Initial Value;
+              ? falsey {
+                result := CreateString Set in truthy conditional block;
               }
+              
+              return result;
+            } """, "Initial Value"),
+
+            ("""
+            { 
+              truthy := 1=1;
+              falsey := !truthy;
+              result := CreateString Initial Value;
+              ? truthy {
+                result := CreateString Set in truthy conditional block;
+              }
+              
+              return result;
             }
 
-            """, "x is falsy"),
+            """, "Set in True conditional block"),
 
             ("""
+            { 
+              truthy := 1=1;
+              falsey := !truthy;
+              result := CreateString Initial Value;
+              ? truthy {
+                result := CreateString Set in truthy conditional block;
+              }
+              
+              result := CreateString Set after conditional block;
+              
+              return result;
+            }
 
-              ReturnNothing Foo
-              Returnargument Foo
+            """, "Set after conditional block"),
 
-            """, None),
-        ]
-
-        self._interpret(self._helper.lexicomb_parser, cases, Interpret.RETURN_EVAL)
-
-    def test_interpreter_returning_result_object(self):
-        cases = [
             ("""
-            {
-            a:=42;
-            ?a=42{
-              return a;
-            };
+            { 
+              truthy := 1=1;
+              falsey := !truthy;
+              result := CreateString Initial Value;
+              ? truthy {
+                result := CreateString Set in truthy conditional block;
+              } {
+                result := CreateString Set in falsey conditional block;
+              }
+                            
+              return result;
+            } """, "Set in True conditional block"),
 
-            a:=5/0;
-            return a;
-            }""", self._create_result(42)),
+            ("""
+            { 
+              truthy := 1=1;
+              falsey := !truthy;
+              result := CreateString Initial Value;
+              ? falsey {
+                result := CreateString Set in truthy conditional block;
+              } {
+                result := CreateString Set in falsey conditional block;
+              }
+                            
+              return result;
+            } """, "Set in False conditional block"),
+
+            ("""
+            { 
+              truthy := 1=1;
+              falsey := !truthy;
+              result := CreateString Initial Value;
+              ? truthy {
+                result := CreateString Set in first truthy conditional block;
+              } ? truthy {
+                result := CreateString Set in second truthy conditional block;
+              }
+                            
+              return result;
+            } """, "Set in first True conditional block"),
+
+            ("""
+            { 
+              truthy := 1=1;
+              falsey := !truthy;
+              result := CreateString Initial Value;
+              ? truthy {
+                result := CreateString Set in first truthy conditional block;
+              }; # statement separator allows subsequent short conditionals
+
+              ? truthy {
+                result := CreateString Set in second truthy conditional block;
+              }
+                            
+              return result;
+            } """, "Set in second True conditional block"),
+
+            ("""
+            { 
+              truthy := 1=1;
+              falsey := !truthy;
+              result := CreateString Initial Value;
+              ? truthy {
+                result := CreateString Set in first True conditional block;
+              }{
+              }
+
+              # empty statement block allows subsequent conditionals,
+              # but statement terminator is preferred
+
+              ? truthy {
+                result := CreateString Set in second truthy conditional block;
+              }
+                            
+              return result;
+            } """, "Set in second True conditional block"),
+
+            ("""
+            { 
+              truthy := 1=1;
+              falsey := !truthy;
+              result := CreateString Initial Value;
+              ? falsey {
+                result := CreateString Set in truthy conditional block;
+              } ? falsey {
+                result := CreateString Set in falsey conditional block;
+              }
+                            
+              return result;
+            } """, "Initial Value"),
+
+            ("""
+            { 
+              truthy := 1=1;
+              falsey := !truthy;
+              result := CreateString Initial Value;
+              ? falsey {
+                result := CreateString Set in if conditional block;
+              } ? falsey {
+                result := CreateString Set in else if conditional block;
+              } {
+                result := CreateString Set in else conditional block;
+              }
+                            
+              return result;
+            } """, "Set in else conditional block"),
+
             ("""
             {
               x := 1;
@@ -879,33 +1052,104 @@ class TestParser(unittest.TestCase):
 
               @? x < y {
                 x := x + step;
-                ?x=(y-step+1){
-                    return x;
-                };
               }
-              return y;
-            }
-            """, self._create_result(9)),
+              return x;
+            } """, 11),
 
             ("""
             {
-              return ReturnArgument foo;
-            }
+              x := 1;
+              step := 2;
+              y := 10;
 
-            """, self._create_result("foo")),
+              @? x < y {
+                x := x + step;
+              }
+              {
+                x := x + step + 1;
+              }
+              return x;
+            } """, 14),
+
+            ("""
+            {
+              x := 1;
+              step := 2;
+              y := 10;
+              
+              @? x > y {
+                x := x + step;
+              }
+              {
+                x := x + step + 1;
+              }
+              return x;
+            } """, 4),
+
+            ("""
+            {
+              x := 1;
+              step := 2;
+              y := 10;
+              
+              @? x < 2 {
+                x := x + step;
+              }
+              ? x < y {
+                x := x + step + 1;
+              }
+              {
+                x:= x - 2 * step;
+              }
+              return x;
+            } """, 8),
+
+            ("""
+            {
+              x := 1;
+              step := 2;
+              y := 10;
+              
+              ? x > 5 {
+                x := x + step;
+              }
+              @? x < y {
+                x := x + step + 1;
+              }
+              {               
+                x:= x - 2 * step - 1;
+              }
+              return x;
+            } """, 5),
+
+            ("""
+            {
+              x := 1;
+              step := 2;
+              y := 10;
+              
+              ? x > 0 {
+                x := 2;
+              }
+              # conditional repeat always begins a new conditional
+              # statement.
+              @? x < y {
+                x := x + step + 1;
+              }
+              {               
+                x:= x - 2 * step - 1;
+              }
+              return x;
+            } """, 6),
 
             ("""{
-              Register Nichola Wilson;
-              Excercise Nichola situps 10 07:15 07:45;
-              Excercise Nichola situps 10 07:05 07:35;
-              Excercise Nichola situps 10 07:00 07:15;
-              Excercise Nichola pushups 20 07:00 07:15;
+              # F0 = 0, F1 = 1, Fn = Fn-1 + Fn-2
+              return Fibernaci 10;
             }
-            """, self._create_result({'Register': {'Nichola': {}}, 'Excercise': {'Nichola': {'situps': {'0': 3, '1': 30, '2': 1.25, '3': 0.4166666666666667}, 'pushups': {'0': 1, '1': 20, '2': 0.25, '3': 0.25}}}})),
-
+            """, {'0': 0, '1': 1, '2': 1, '3': 2, '4': 3, '5': 5, '6': 8, '7': 13, '8': 21, '9': 34, '10': 55})
         ]
 
-        self._interpret(self._helper.lexicomb_parser, cases, Interpret.RETURN_RESULT)
+        self._interpret(self._helper.lexicomb_parser, cases, Interpret.RETURN_EVAL)
 
     def test_interpreter_error_handling(self):
         from bbpyp.abstract_parser.exception.parse_error import ParseError
@@ -943,13 +1187,17 @@ class TestParser(unittest.TestCase):
 
         if interpret_enum != Interpret.DO_NOT_INTERPRET:
             frame = {name: value for name, value in kwargs.items()}
-            if interpret_enum == Interpret.RETURN_EVAL:
-                actual_result = interpreter.eval(frame)
-            elif interpret_enum == Interpret.RETURN_RESULT:
-                actual_result = interpreter.eval_and_return_result(frame)
-            else:
-                interpreter.eval(frame)
-                actual_result = frame
+            try:
+                if interpret_enum == Interpret.RETURN_EVAL:
+                    actual_result = interpreter.eval(frame)
+                elif interpret_enum == Interpret.RETURN_RESULT:
+                    actual_result = interpreter.eval_and_return_result(frame)
+                else:
+                    interpreter.eval(frame)
+                    actual_result = frame
+            except Exception as e:
+                print(f"An exception occurred during evaluation: {message}")
+                raise e
 
         ################################################################################################
         # un-comment the call to print_interpreter to see the string representation of the interpreter #
@@ -970,7 +1218,7 @@ class TestParser(unittest.TestCase):
             raise
 
     def _process_cases(self, parser, cases, interpret_enum=Interpret.DO_NOT_INTERPRET):
-        item_number = 0
+        case_number = 0
         for case in cases:
             kwargs = {}
             if len(case) == 2:
@@ -979,8 +1227,8 @@ class TestParser(unittest.TestCase):
                 provided, expected, kwargs = case
 
             self._assert_parser(parser, provided, expected,
-                                f"for case #{item_number}", interpret_enum, **kwargs)
-            item_number += 1
+                                f"for case #{case_number}", interpret_enum, **kwargs)
+            case_number += 1
 
     def _evaluate(self, parser, cases):
         self._process_cases(parser, cases)
@@ -1056,6 +1304,7 @@ class TestParser(unittest.TestCase):
         return self._helper.lexicomb_parser._block_factory(statements, self._helper.lexicomb_parser._statement_seperator.value)
 
     def _create_conditional_block(self, logical_expression_ast, if_block_ast, else_block_ast=None):
+
         return self._helper.lexicomb_parser._conditional_factory(logical_expression_ast, if_block_ast, else_block_ast)
 
     def _create_conditional_repeat_block(self, logical_expression_ast, if_block_ast, else_block_ast=None):
