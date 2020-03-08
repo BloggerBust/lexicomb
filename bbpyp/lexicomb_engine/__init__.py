@@ -94,9 +94,9 @@ class LexicombEngineIocContainer:
             self.__instance.main = providers.Callable(
                 main, create_client=create_client, pub_sub=message_bus_ioc.pub_sub_provider, async_service=common_ioc.async_service_provider, metric_service=common_ioc.metric_service_provider)
 
-        def __create_lexicomb_client(self, logger, pub_sub, message_pipe_line_builder, pub_sub_client_factory, tag_stream_src, lexical_state_machine, interpreter_state_machine):
+        def __create_lexicomb_client(self, logger, pub_sub, message_pipe_line_builder, pub_sub_client_factory, lexicon_path, lexical_state_machine, interpreter_state_machine):
 
-            pub_sub_client = pub_sub_client_factory(tag_stream_src)
+            pub_sub_client = pub_sub_client_factory(lexicon_path)
             pub_sub.register_topic_publisher(
                 Topic.LEXICAL.value, pub_sub_client)
             pub_sub.register_topic_subscriber(

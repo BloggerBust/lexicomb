@@ -9,7 +9,6 @@ from bbpyp.lexicomb_engine import LexicombEngineIocContainer
 
 
 def Bootstrap(app_config, app_main):
-
     lexicomb_engine_ioc = LexicombEngineIocContainer(
         config=app_config,
         main=app_main,

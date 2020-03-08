@@ -34,9 +34,9 @@ class LexicombIocContainer(containers.DeclarativeContainer):
     """Inversion of control container for the Lexicomb parser"""
 
     def bootstrap_container(config, logger, common_ioc, combinator_ioc, *args, **kwargs):
-
         LexicombIocContainer.instance = LexicombIocContainer(
             config=config, common_ioc=common_ioc, combinator_ioc=combinator_ioc)
+
         IocUtil.identify_singletons_to_be_skipped_during_deepcopy(LexicombIocContainer.instance)
 
         return LexicombIocContainer.instance
@@ -53,8 +53,8 @@ class LexicombIocContainer(containers.DeclarativeContainer):
     parser_factory_provider = providers.Singleton(
         lambda: LexicombIocContainer.instance.parser_provider())
 
-    src_provider = providers.Singleton(
-        lambda: LexicombIocContainer.instance.config.lexicomb.src())
+    lexicon_provider = providers.Singleton(
+        lambda: LexicombIocContainer.instance.config.lexicomb.lexicon())
 
     # lexer
     tag_exprssions_factory = providers.DelegatedFactory(TagExpressions)
@@ -107,7 +107,7 @@ class LexicombIocContainer(containers.DeclarativeContainer):
         Lexer, logger=logging_provider, tag_expressions_builder=tag_expressions_builder_factory)
 
     tag_statement_provider = providers.DelegatedFactory(
-        TagStatement, parser_service=parser_factory_provider, lexer_service=lexer_provider, scripts_path=src_provider, file_stream_service=common_ioc.file_stream_service_provider, result_factory=result_factory_provider)
+        TagStatement, parser_service=parser_factory_provider, lexer_service=lexer_provider, lexicon_path=lexicon_provider, file_stream_service=common_ioc.file_stream_service_provider, result_factory=result_factory_provider)
 
     no_op_statement_factory_provider = providers.DelegatedFactory(
         NoOpStatement, result_factory=result_factory_provider)

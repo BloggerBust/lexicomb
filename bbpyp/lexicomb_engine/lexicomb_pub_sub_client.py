@@ -6,10 +6,10 @@ from bbpyp.lexicomb_engine.model.topic import Topic
 class LexicombPubSubClient(AbstractPubSubClient):
     __STATE_MACHINE_KEY = "STATE_MACHINE_KEY"
 
-    def __init__(self, tag_stream_src, file_stream_service, message_factory, *args, **kwargs):
+    def __init__(self, lexicon_path, file_stream_service, message_factory, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._message_factory = message_factory
-        self._lexicomb_src = tag_stream_src
+        self._lexicon_path = lexicon_path
         self._file_stream_service = file_stream_service
         self._result = None
         self._publish_lines = None
@@ -52,7 +52,7 @@ class LexicombPubSubClient(AbstractPubSubClient):
     async def _before_publication(self, *args, **kwargs):
         if self._publish_lines is None:
             self._publish_lines = self._file_stream_service.get_io_bound_line_action_worker_thread(
-                self._lexicomb_src)
+                self._lexicon_path)
 
     def _create_and_publish_message(self, lines, *args):
         messages = []

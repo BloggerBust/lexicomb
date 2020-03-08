@@ -1,3 +1,4 @@
+from os import path
 from copy import deepcopy
 from bbpyp.lexicomb.parser.statement import Statement
 from bbpyp.lexicomb.parser.real_number import RealNumber
@@ -9,15 +10,15 @@ from bbpyp.abstract_parser.exception.parse_error import ParseError
 class TagStatement(Statement):
     PARSED_CACHE = {}
 
-    def __init__(self, tag, rest, parser_service, lexer_service, scripts_path, file_stream_service, *args, **kwargs):
+    def __init__(self, tag, rest, parser_service, lexer_service, lexicon_path, file_stream_service, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._parser = parser_service
         self._lexer = lexer_service
         self._tag = tag
         self._rest = rest
-        self._scripts_path = scripts_path
+        self._lexicon_path = lexicon_path if lexicon_path != None and lexicon_path.strip() != "" else "."
         self._file_stream_service = file_stream_service
-        self._tag_file = f"{scripts_path}{self._tag.name}.ts"
+        self._tag_file = path.join(self._lexicon_path, f"{self._tag.name}.ls")
 
     def __repr__(self):
         return f"{self.artifact_name}({self._tag, self._rest})"

@@ -96,7 +96,7 @@ class Parser(AbstractParser):
         self._logger.debug("tokens: {}, position: {}", tokens, position)
 
         def raise_error(exception=None):
-            message = "The parser has encountered an unhandled exception" if exception is not None else "Malformed tagscript encountered. Parsing cannot continue."
+            message = "The parser has encountered an unhandled exception" if exception is not None else "Malformed lexicon script encountered. Parsing cannot continue."
             parser_progress = self.get_parser_progress()
             _position = parser_progress["position"] if parser_progress is not None else position
 

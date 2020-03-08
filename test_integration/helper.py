@@ -77,14 +77,14 @@ class Helper():
                     },
                 },
                 "root": {
-                    'level': 'ERROR',
-                    'handlers': ['root_file']
+                    "level": "ERROR",
+                    "handlers": ["root_file"]
                 }
             },
             "default_logger": "production",
             "memory_channel_max_buffer_size": 0,
             "lexicomb": {
-                "src": "test_integration/lexicomb/src/"
+                "lexicon": "test_integration/lexicomb/lexicon/"
             }
         }
 
