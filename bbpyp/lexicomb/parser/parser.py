@@ -37,7 +37,6 @@ class Parser(AbstractParser):
         self.build()
 
     def build(self):
-
         self._numeric_term = self._tag_factory(TagEnum.NUMBER.value) >> (
             lambda n: self._real_number_factory(n))
 
@@ -71,7 +70,7 @@ class Parser(AbstractParser):
         self._logical_expression = self._create_logical_expression_parser()
 
         self._tag_expression = self._create_tag_expression()
-        self._expression = self.logical_expression | self.relational_expression | self.arethmatic_expression | self._tag_expression
+        self._expression = self.logical_expression | self.arethmatic_expression | self._tag_expression
 
         self._statement_block_begin = self._create_reserved("{")
         self._statement_block_end = self._create_reserved("}")
@@ -222,11 +221,10 @@ class Parser(AbstractParser):
     def _create_statement_block(self):
         block_expression = (self._statement_block_begin + self.statement_sequence +
                             self._statement_block_end) >> self._create_block_ast
-        block_expression |= self.statement
         return block_expression
 
     def _create_conditional_block(self):
-        factor = self.logical_expression | self.relational_expression | self.existence_check | self.factor
+        factor = self.logical_expression | self.existence_check | self.factor
         conditional_parser = self._create_reserved("?") + factor
 
         conditional_statement = conditional_parser @ (
