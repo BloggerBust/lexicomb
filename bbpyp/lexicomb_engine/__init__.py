@@ -15,9 +15,8 @@ class LexicombEngineIocContainer:
 
     class __LexicombEngineIocContainer:
         def __init__(self, config, main, common_ioc_factory, message_bus_ioc_factory, combinator_ioc_factory, lexicomb_ioc_factory, state_machine_ioc_factory, lexical_state_machine_ioc_factory, interpreter_state_machine_ioc_factory):
-
             self.__instance = containers.DynamicContainer()
-            config_provider = providers.Object(config)
+
             logging_provider = IocUtil.create_basic_log_adapter(providers, "lexicomb_engine")
             common_ioc = common_ioc_factory(config=config, source_format_rules={
                 ":=": {"format": [(r"\s*{}\s*", r"{} ")]},
