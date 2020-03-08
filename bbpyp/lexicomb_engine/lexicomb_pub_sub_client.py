@@ -52,7 +52,7 @@ class LexicombPubSubClient(AbstractPubSubClient):
     async def _before_publication(self, *args, **kwargs):
         if self._publish_lines is None:
             self._publish_lines = self._file_stream_service.get_io_bound_line_action_worker_thread(
-                self._lexicon_path)
+                self._lexicon_path, cancellable=True)
 
     def _create_and_publish_message(self, lines, *args):
         messages = []
