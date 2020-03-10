@@ -1179,11 +1179,11 @@ class TestParser(unittest.TestCase):
         actual_result = parser_result.value
 
         def print_interpreter():
-            print(f"parser = {interpreter}")
+            self._helper.logger.debug(f"parser = {interpreter}")
 
         def print_expected_and_actual():
-            print(f"expected = {expected_result}")
-            print(f"actual = {actual_result}")
+            self._helper.logger.debug(f"expected = {expected_result}")
+            self._helper.logger.debug(f"actual = {actual_result}")
 
         if interpret_enum != Interpret.DO_NOT_INTERPRET:
             frame = {name: value for name, value in kwargs.items()}
@@ -1196,26 +1196,20 @@ class TestParser(unittest.TestCase):
                     interpreter.eval(frame)
                     actual_result = frame
             except Exception as e:
-                print(f"An exception occurred during evaluation: {message}")
+                self._helper.logger.error(f"An exception occurred during evaluation: {message}", e)
                 raise e
 
-        ################################################################################################
-        # un-comment the call to print_interpreter to see the string representation of the interpreter #
-        ################################################################################################
-        # print_interpreter()
+        print_interpreter()
 
         try:
             self.assertEqual(actual_result, expected_result, message)
             if hasattr(actual_result, '__dict__'):
                 self.assertEqual(actual_result.__dict__, expected_result.__dict__, message)
-        except:
+        except Exception as e:
+            self._helper.logger.error(f"An exception occurred during assertion: {message}", e)
             print_expected_and_actual()
-
-            ################################################################################################
-            # un-comment the call to print_interpreter to see the string representation of the interpreter #
-            ################################################################################################
-            # print_interpreter()
-            raise
+            print_interpreter()
+            raise e
 
     def _process_cases(self, parser, cases, interpret_enum=Interpret.DO_NOT_INTERPRET):
         case_number = 0

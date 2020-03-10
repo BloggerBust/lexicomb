@@ -1,3 +1,4 @@
+import logging
 from bbpyp.lexicomb_engine.bootstrap import Bootstrap as LEngineBootstrap
 from bbpyp.lexicomb.parser.model.operator_enum import OperatorEnum
 
@@ -7,6 +8,7 @@ class Helper():
         self._lexicomb_ioc = None
         self._lexicomb_parser = None
         self._lexer = None
+        self._logger = logging.getLogger('test_integration.helper')
         self.bootstrap()
 
     def bootstrap(self):
@@ -16,72 +18,34 @@ class Helper():
                 "formatters": {
                     "detailed": {
                         "class": "logging.Formatter",
-                        "format": "%(asctime)s [%(relativeCreated)6d] [%(name)s - %(levelname)s] [%(module)s::%(funcName)s] = %(message)s"
+                        "format": "%(asctime)s [%(levelname)s] [%(name)s] [%(thread)d] [%(module)s::%(funcName)s] = %(message)s"
+                    },
+                    "context_detailed": {
+                        "class": "logging.Formatter",
+                        "format": "%(asctime)s [%(levelname)s] [%(name)s] [%(thread)d] [%(CONTEXT_ID)s] [%(module)s::%(funcName)s] %(message)s"
                     },
                     "standard": {
                         "class": "logging.Formatter",
-                        "format": "[%(name)s - %(levelname)s] [%(module)s::%(funcName)s] = %(message)s"
+                        "format": "[%(asctime)s] [%(levelname)s] [%(name)s] [%(module)s::%(funcName)s] %(message)s"
                     }
                 },
                 "handlers": {
                     "console": {
                         "class": "logging.StreamHandler",
-                        "level": "DEBUG",
                         "formatter": "standard"
-                    },
-                    "root_file": {
-                        "class": "logging.FileHandler",
-                        "filename": "trip_log.log",
-                        "mode": "w",
-                        "formatter": "detailed"
-                    },
-                    "message_bus_file": {
-                        "class": "logging.FileHandler",
-                        "filename": "message_bus.log",
-                        "mode": "w",
-                        "formatter": "detailed"
-                    },
-                    "lexical_state_machine_file": {
-                        "class": "logging.FileHandler",
-                        "filename": "lexical_state_machine.log",
-                        "mode": "w",
-                        "formatter": "detailed"
-                    },
-                    "lexicomb_file": {
-                        "class": "logging.FileHandler",
-                        "filename": "lexicomb_file.log",
-                        "mode": "w",
-                        "formatter": "detailed"
-                    },
+                    }
                 },
                 "loggers": {
-                    "development": {
+                    "bbpyp": {
                         "level": "ERROR",
                         "handlers": ["console"]
                     },
-                    "production": {
+                    "test_integration": {
                         "level": "ERROR",
-                        "handlers": ["root_file"]
-                    },
-                    "message_bus": {
-                        "level": "ERROR",
-                        "handlers": ["console", "message_bus_file"],
-                    },
-                    "lexical_state_machine": {
-                        "level": "ERROR",
-                        "handlers": ["console", "lexical_state_machine_file"],
-                    },
-                    "lexicomb": {
-                        "level": "ERROR",
-                        "handlers": ["console", "lexicomb_file"],
-                    },
-                },
-                "root": {
-                    "level": "ERROR",
-                    "handlers": ["root_file"]
+                        "handlers": ["console"]
+                    }
                 }
             },
-            "default_logger": "production",
             "memory_channel_max_buffer_size": 0,
             "lexicomb": {
                 "lexicon": "test_integration/lexicomb/lexicon/"
@@ -98,6 +62,9 @@ class Helper():
     def tokenize(self, input_line):
         return self._lexer.tokenize(input_line)
 
+    def create_operator_enum(self, operator):
+        return OperatorEnum(operator)
+
     @property
     def lexicomb_parser(self):
         return self._lexicomb_parser
@@ -106,5 +73,6 @@ class Helper():
     def lexicomb_ioc(self):
         return self._lexicomb_ioc
 
-    def create_operator_enum(self, operator):
-        return OperatorEnum(operator)
+    @property
+    def logger(self):
+        return self._logger
