@@ -890,6 +890,30 @@ class TestParser(unittest.TestCase):
             }
             """, None),
 
+            ("""{
+              true:= CreateBoolean true;
+              return true;
+            }
+            """, True),
+
+            ("""{
+              false:= CreateBoolean false;
+              return false;
+            }
+            """, False),
+
+            ("""{
+              x:= ChangeSign 5;
+              y:= ChangeSign x;
+              return CreateString first is x and second is y;
+            }
+            """, "first is -5 and second is 5"),
+
+            ("""{
+              return CreateHash first_name:John last_name:Doe age:99;
+            }
+            """, {"first_name": "John", "last_name": "Doe", "age": 99}),
+
             ##############################################
             # Testing the behavior of conditional blocks #
             ##############################################
@@ -908,24 +932,24 @@ class TestParser(unittest.TestCase):
 
             ("""
             { 
-              truthy := 1=1;
-              falsey := !truthy;
+              true := CreateBoolean true;
+              false := CreateBoolean false;
               result := CreateString Initial Value;
-              ? truthy {
+              ? true {
                 result := CreateString Set in truthy conditional block;
               }
               
               return result;
             }
 
-            """, "Set in True conditional block"),
+            """, "Set in truthy conditional block"),
 
             ("""
             { 
-              truthy := 1=1;
-              falsey := !truthy;
+              true := CreateBoolean true;
+              false := CreateBoolean false;
               result := CreateString Initial Value;
-              ? truthy {
+              ? true {
                 result := CreateString Set in truthy conditional block;
               }
               
@@ -938,91 +962,91 @@ class TestParser(unittest.TestCase):
 
             ("""
             { 
-              truthy := 1=1;
-              falsey := !truthy;
+              true := CreateBoolean true;
+              false := CreateBoolean false;
               result := CreateString Initial Value;
-              ? truthy {
+              ? true {
                 result := CreateString Set in truthy conditional block;
               } {
                 result := CreateString Set in falsey conditional block;
               }
                             
               return result;
-            } """, "Set in True conditional block"),
+            } """, "Set in truthy conditional block"),
 
             ("""
             { 
-              truthy := 1=1;
-              falsey := !truthy;
+              true := CreateBoolean true;
+              false := CreateBoolean false;
               result := CreateString Initial Value;
-              ? falsey {
+              ? false {
                 result := CreateString Set in truthy conditional block;
               } {
                 result := CreateString Set in falsey conditional block;
               }
                             
               return result;
-            } """, "Set in False conditional block"),
+            } """, "Set in falsey conditional block"),
 
             ("""
             { 
-              truthy := 1=1;
-              falsey := !truthy;
+              true := CreateBoolean true;
+              false := CreateBoolean false;
               result := CreateString Initial Value;
-              ? truthy {
-                result := CreateString Set in first truthy conditional block;
-              } ? truthy {
-                result := CreateString Set in second truthy conditional block;
+              ? false {
+                result := CreateString Set in truthy conditional block;
+              } ? true {
+                result := CreateString Set in falsey conditional block;
               }
                             
               return result;
-            } """, "Set in first True conditional block"),
+            } """, "Set in falsey conditional block"),
 
             ("""
             { 
-              truthy := 1=1;
-              falsey := !truthy;
+              true := CreateBoolean true;
+              false := CreateBoolean false;
               result := CreateString Initial Value;
-              ? truthy {
+              ? true {
                 result := CreateString Set in first truthy conditional block;
               }; # statement separator allows subsequent short conditionals
 
-              ? truthy {
+              ? true {
                 result := CreateString Set in second truthy conditional block;
               }
                             
               return result;
-            } """, "Set in second True conditional block"),
+            } """, "Set in second truthy conditional block"),
 
             ("""
             { 
-              truthy := 1=1;
-              falsey := !truthy;
+              true := CreateBoolean true;
+              false := CreateBoolean false;
               result := CreateString Initial Value;
-              ? truthy {
-                result := CreateString Set in first True conditional block;
+              ? true {
+                result := CreateString Set in first truthy conditional block;
               }{
               }
 
               # empty statement block allows subsequent conditionals,
               # but statement terminator is preferred
 
-              ? truthy {
+              ? true {
                 result := CreateString Set in second truthy conditional block;
               }
                             
               return result;
-            } """, "Set in second True conditional block"),
+            } """, "Set in second truthy conditional block"),
 
             ("""
             { 
-              truthy := 1=1;
-              falsey := !truthy;
+              true := CreateBoolean true;
+              false := CreateBoolean false;
               result := CreateString Initial Value;
-              ? falsey {
-                result := CreateString Set in truthy conditional block;
-              } ? falsey {
-                result := CreateString Set in falsey conditional block;
+              ? false {
+                result := CreateString Set in first falsey conditional block;
+              } ? false {
+                result := CreateString Set in second falsey conditional block;
               }
                             
               return result;
@@ -1030,12 +1054,12 @@ class TestParser(unittest.TestCase):
 
             ("""
             { 
-              truthy := 1=1;
-              falsey := !truthy;
+              true := CreateBoolean true;
+              false := CreateBoolean false;
               result := CreateString Initial Value;
-              ? falsey {
+              ? false {
                 result := CreateString Set in if conditional block;
-              } ? falsey {
+              } ? false {
                 result := CreateString Set in else if conditional block;
               } {
                 result := CreateString Set in else conditional block;
