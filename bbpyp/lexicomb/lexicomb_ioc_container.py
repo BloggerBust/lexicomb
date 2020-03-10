@@ -47,7 +47,7 @@ class LexicombIocContainer(containers.DeclarativeContainer):
     # Configuration
     config = providers.Configuration('config')
     config_provider = providers.Object(config)
-    logging_provider = IocUtil.create_basic_log_adapter(providers, "lexicomb")
+    logging_provider = IocUtil.create_basic_log_adapter(providers, "bbpyp.lexicomb")
 
     # internal providers
     parser_factory_provider = providers.Singleton(
