@@ -600,7 +600,7 @@ class TestParser(unittest.TestCase):
 
             ("""
             {
-                Athlete Trevor;
+              Athlete Trevor;
             }
             """, self._create_statement_block([
                 self._create_tag_statement("Athlete", ["Trevor"]),
@@ -608,16 +608,16 @@ class TestParser(unittest.TestCase):
 
             ("""
             {
-                x := 5;
-                y := 10;
-                Athlete Trevor;
-                Excercise Log Trevor x pushups;
-                ? y > 5 {
-                  Excercise
-                  Log Trevor
-                  y
-                  situps;
-                }
+              x := 5;
+              y := 10;
+              Athlete Trevor;
+              Excercise Log Trevor x pushups;
+              ? y > 5 {
+                Excercise
+                Log Trevor
+                y
+                situps;
+              }
             }
             """, self._create_statement_block([
                 self._create_assignment_statement("x", "5"),
@@ -634,13 +634,13 @@ class TestParser(unittest.TestCase):
         cases = [
             ("""
             {
-            a:=42;
-            ?a=42{
-              return a;
-            };
+              a:=42;
+              ?a=42{
+                return a;
+              };
 
-            a:=5/0;
-            return a;
+              a:=5/0;
+              return a;
             }""", self._create_result(42)),
             ("""
             {
@@ -861,9 +861,9 @@ class TestParser(unittest.TestCase):
             ("""{
               x:= 1+2+3;
               name:= Concat Trevor Wilson;
-              return name + x;
+              return x + name;
             }
-            """, "TrevorWilson6"),
+            """, "6TrevorWilson"),
 
             ("""{
               return Concat 1 2 3;
@@ -871,7 +871,6 @@ class TestParser(unittest.TestCase):
             """, 6),
 
             ("""{
-              CreateString 1 2 3 4 5 6 Trevor Wilson;
               return CreateString 1 2 3 Trevor Wilson;
             }
             """, "6Trevor Wilson"),
@@ -1168,7 +1167,7 @@ class TestParser(unittest.TestCase):
 
             ("""{
               # F0 = 0, F1 = 1, Fn = Fn-1 + Fn-2
-              return Fibernaci 10;
+              return GenerateFibernaciSequence 10;
             }
             """, {'0': 0, '1': 1, '2': 1, '3': 2, '4': 3, '5': 5, '6': 8, '7': 13, '8': 21, '9': 34, '10': 55})
         ]

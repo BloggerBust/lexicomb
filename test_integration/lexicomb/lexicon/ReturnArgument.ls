@@ -1,3 +1,3 @@
 {
-    return arg0;
+  return arg0;
 }
