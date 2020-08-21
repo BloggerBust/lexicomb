@@ -8,7 +8,7 @@ Lexicomb is a keyword-driven interpreted programming language. The word /Lexicom
 
 * Related Projects
 ** [[https://github.com/BloggerBust/bbpyp][BbPyP]]
-#+INCLUDE: "~/dev/bbpyp/README.org::Introduction" :only-contents t
+#+INCLUDE: "../bbpyp/README.org::Introduction" :only-contents t
 
 * Language Specification
 Lexicomb source code has two representations: [[*Tag Stream][Tag Stream]] and [[*Lexicon Script][Lexicon script]]. Lexicon script is kept in a file with the extension /ls/ and saved in a directory that may contain many such files. All such files, taken together, constitute the lexicon. The name of the file becomes the first tag of the tag statement, therefore file names may not contain spaces.
