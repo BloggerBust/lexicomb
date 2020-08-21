@@ -65,12 +65,12 @@ class Parser(AbstractParser):
 
         self._existence_check = access_by_factor >> self._exist_factory
 
-        self._arethmatic_expression = self._create_arethmatic_expression_parser()
+        self._arithmetic_expression = self._create_arithmetic_expression_parser()
         self._relational_expression = self._create_relational_expression_parser()
         self._logical_expression = self._create_logical_expression_parser()
 
         self._tag_expression = self._create_tag_expression()
-        self._expression = self.logical_expression | self.arethmatic_expression | self._tag_expression
+        self._expression = self.logical_expression | self.arithmetic_expression | self._tag_expression
 
         self._statement_block_begin = self._create_reserved("{")
         self._statement_block_end = self._create_reserved("}")
@@ -137,11 +137,11 @@ class Parser(AbstractParser):
 
         return expression_tree
 
-    def _create_arethmatic_expression_parser(self):
+    def _create_arithmetic_expression_parser(self):
         return self._create_expression_tree(self.factor, PrecedenceLevelEnum.FOUR | PrecedenceLevelEnum.FIVE)
 
     def _create_relational_expression_parser(self):
-        factor = self.arethmatic_expression | self.factor
+        factor = self.arithmetic_expression | self.factor
         return self._create_expression_tree(factor, PrecedenceLevelEnum.TWO | PrecedenceLevelEnum.THREE)
 
     def _create_logical_expression_parser(self):
@@ -278,8 +278,8 @@ class Parser(AbstractParser):
         return self.access_named_container | self.name | self.numeric_term | self.hash_term
 
     @property
-    def arethmatic_expression(self):
-        return self._arethmatic_expression
+    def arithmetic_expression(self):
+        return self._arithmetic_expression
 
     @property
     def relational_expression(self):

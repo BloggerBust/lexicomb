@@ -20,9 +20,9 @@ from bbpyp.lexicomb.parser.conditional import Conditional
 from bbpyp.lexicomb.parser.conditional_repeat import ConditionalRepeat
 from bbpyp.lexicomb.parser.unary_operator_factory import UnaryOperatorFactory
 from bbpyp.lexicomb.parser.logical_unary_operator import LogicalUnaryOperator
-from bbpyp.lexicomb.parser.arethmatic_unary_operator import ArethmaticUnaryOperator
+from bbpyp.lexicomb.parser.arithmetic_unary_operator import ArithmeticUnaryOperator
 from bbpyp.lexicomb.parser.binary_operator_factory import BinaryOperatorFactory
-from bbpyp.lexicomb.parser.arethmatic_binary_operator import ArethmaticBinaryOperator
+from bbpyp.lexicomb.parser.arithmetic_binary_operator import ArithmeticBinaryOperator
 from bbpyp.lexicomb.parser.relational_binary_operator import RelationalBinaryOperator
 from bbpyp.lexicomb.parser.logical_binary_operator import LogicalBinaryOperator
 from bbpyp.lexicomb.parser.select_operator_factory import SelectOperatorFactory
@@ -84,19 +84,19 @@ class LexicombIocContainer(containers.DeclarativeContainer):
 
     logical_unary_operator_provider = providers.DelegatedFactory(
         LogicalUnaryOperator, result_factory=result_factory_provider)
-    arethmatic_unary_operator_provider = providers.DelegatedFactory(
-        ArethmaticUnaryOperator, result_factory=result_factory_provider)
+    arithmetic_unary_operator_provider = providers.DelegatedFactory(
+        ArithmeticUnaryOperator, result_factory=result_factory_provider)
     unary_operator_factory = providers.Factory(
-        UnaryOperatorFactory, logical_unary_operator_factory=logical_unary_operator_provider, arethmatic_unary_operator_factory=arethmatic_unary_operator_provider)
+        UnaryOperatorFactory, logical_unary_operator_factory=logical_unary_operator_provider, arithmetic_unary_operator_factory=arithmetic_unary_operator_provider)
 
-    arethmatic_binary_operator_provider = providers.DelegatedFactory(
-        ArethmaticBinaryOperator, real_number_factory=real_number_factory_provider, string_factory=string_factory_provider, result_factory=result_factory_provider)
+    arithmetic_binary_operator_provider = providers.DelegatedFactory(
+        ArithmeticBinaryOperator, real_number_factory=real_number_factory_provider, string_factory=string_factory_provider, result_factory=result_factory_provider)
     relational_binary_operator_provider = providers.DelegatedFactory(
         RelationalBinaryOperator, result_factory=result_factory_provider)
     logical_binary_operator_provider = providers.DelegatedFactory(
         LogicalBinaryOperator, result_factory=result_factory_provider)
 
-    binary_operator_factory = providers.Factory(BinaryOperatorFactory, arethmatic_binary_operator_factory=arethmatic_binary_operator_provider,
+    binary_operator_factory = providers.Factory(BinaryOperatorFactory, arithmetic_binary_operator_factory=arithmetic_binary_operator_provider,
                                                 relational_binary_operator_factory=relational_binary_operator_provider, logical_binary_operator_factory=logical_binary_operator_provider)
 
     select_operator_factory = providers.Factory(

@@ -14,8 +14,8 @@
 
   user_record := {};
 
-  ?[Excercise[user_name]]{
-    user_record[user_name] := Excercise[user_name];
+  ?[Exercise[user_name]]{
+    user_record[user_name] := Exercise[user_name];
   }{
     user_record[user_name] := {};
   }

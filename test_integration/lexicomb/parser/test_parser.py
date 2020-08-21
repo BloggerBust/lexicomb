@@ -24,7 +24,7 @@ class TestParser(unittest.TestCase):
             ("00045.1000", self._helper.lexicomb_ioc.real_number_factory_provider("00045.1000")),
         ]
 
-        self._evaluate(self._helper.lexicomb_parser.arethmatic_expression, cases)
+        self._evaluate(self._helper.lexicomb_parser.arithmetic_expression, cases)
 
     def test_parser_given_name_expect_variable_artifact(self):
         cases = [
@@ -36,84 +36,84 @@ class TestParser(unittest.TestCase):
             ("MY_VAR_1", self._create_term("MY_VAR_1"))
         ]
 
-        self._evaluate(self._helper.lexicomb_parser.arethmatic_expression, cases)
+        self._evaluate(self._helper.lexicomb_parser.arithmetic_expression, cases)
 
-    def test_parser_given_arethmatic_expression_expect_matching_arethmatic_expression_ast(self):
+    def test_parser_given_arithmetic_expression_expect_matching_arithmetic_expression_ast(self):
         cases = [
-            ("1 + 42", self._create_arethmatic_binary_operator("+", "1", "42")),
-            ("1 - 42", self._create_arethmatic_binary_operator("-", "1", "42")),
-            ("1 * 42", self._create_arethmatic_binary_operator("*", "1", "42")),
-            ("1 / 42", self._create_arethmatic_binary_operator("/", "1", "42")),
-            ("x + y", self._create_arethmatic_binary_operator("+", "x", "y")),
-            ("x - y", self._create_arethmatic_binary_operator("-", "x", "y")),
-            ("x * y", self._create_arethmatic_binary_operator("*", "x", "y")),
-            ("x / y", self._create_arethmatic_binary_operator("/", "x", "y")),
+            ("1 + 42", self._create_arithmetic_binary_operator("+", "1", "42")),
+            ("1 - 42", self._create_arithmetic_binary_operator("-", "1", "42")),
+            ("1 * 42", self._create_arithmetic_binary_operator("*", "1", "42")),
+            ("1 / 42", self._create_arithmetic_binary_operator("/", "1", "42")),
+            ("x + y", self._create_arithmetic_binary_operator("+", "x", "y")),
+            ("x - y", self._create_arithmetic_binary_operator("-", "x", "y")),
+            ("x * y", self._create_arithmetic_binary_operator("*", "x", "y")),
+            ("x / y", self._create_arithmetic_binary_operator("/", "x", "y")),
         ]
 
-        self._evaluate(self._helper.lexicomb_parser.arethmatic_expression, cases)
+        self._evaluate(self._helper.lexicomb_parser.arithmetic_expression, cases)
 
-    def test_parser_given_arethmatic_expression_expect_arethmatic_expression_ast_with_correct_precedence(self):
+    def test_parser_given_arithmetic_expression_expect_arithmetic_expression_ast_with_correct_precedence(self):
         cases = [
-            ("3 + 4 + 2", self._create_arethmatic_binary_operator(
-                "+", self._create_arethmatic_binary_operator(
+            ("3 + 4 + 2", self._create_arithmetic_binary_operator(
+                "+", self._create_arithmetic_binary_operator(
                     "+", "3", "4"), "2")),
-            ("3 + 4 - 2", self._create_arethmatic_binary_operator(
-                "-", self._create_arethmatic_binary_operator(
+            ("3 + 4 - 2", self._create_arithmetic_binary_operator(
+                "-", self._create_arithmetic_binary_operator(
                     "+", "3", "4"), "2")),
-            ("3 - 4 - 2", self._create_arethmatic_binary_operator(
-                "-", self._create_arethmatic_binary_operator(
+            ("3 - 4 - 2", self._create_arithmetic_binary_operator(
+                "-", self._create_arithmetic_binary_operator(
                     "-", "3", "4"), "2")),
-            ("3 * 4 + 2", self._create_arethmatic_binary_operator(
-                "+", self._create_arethmatic_binary_operator(
+            ("3 * 4 + 2", self._create_arithmetic_binary_operator(
+                "+", self._create_arithmetic_binary_operator(
                     "*", "3", "4"), "2")),
-            ("3 + 4 * 2", self._create_arethmatic_binary_operator(
-                "+", "3", self._create_arethmatic_binary_operator(
+            ("3 + 4 * 2", self._create_arithmetic_binary_operator(
+                "+", "3", self._create_arithmetic_binary_operator(
                     "*", "4", "2"))),
-            ("3 * 4 * 2", self._create_arethmatic_binary_operator(
-                "*", self._create_arethmatic_binary_operator(
+            ("3 * 4 * 2", self._create_arithmetic_binary_operator(
+                "*", self._create_arithmetic_binary_operator(
                     "*", "3", "4"), "2")),
-            ("3 / 4 * 2", self._create_arethmatic_binary_operator(
-                "*", self._create_arethmatic_binary_operator(
+            ("3 / 4 * 2", self._create_arithmetic_binary_operator(
+                "*", self._create_arithmetic_binary_operator(
                     "/", "3", "4"), "2")),
-            ("3 * 4 / 2", self._create_arethmatic_binary_operator(
-                "/", self._create_arethmatic_binary_operator(
+            ("3 * 4 / 2", self._create_arithmetic_binary_operator(
+                "/", self._create_arithmetic_binary_operator(
                     "*", "3", "4"), "2")),
-            ("3 / 4 / 2", self._create_arethmatic_binary_operator(
-                "/", self._create_arethmatic_binary_operator(
+            ("3 / 4 / 2", self._create_arithmetic_binary_operator(
+                "/", self._create_arithmetic_binary_operator(
                     "/", "3", "4"), "2")),
-            ("3 + 4 * 2 / 2", self._create_arethmatic_binary_operator(
-                "+", "3", self._create_arethmatic_binary_operator(
-                    "/", self._create_arethmatic_binary_operator(
+            ("3 + 4 * 2 / 2", self._create_arithmetic_binary_operator(
+                "+", "3", self._create_arithmetic_binary_operator(
+                    "/", self._create_arithmetic_binary_operator(
                         "*", "4", "2"), "2")))
         ]
 
-        self._evaluate(self._helper.lexicomb_parser.arethmatic_expression, cases)
+        self._evaluate(self._helper.lexicomb_parser.arithmetic_expression, cases)
 
-    def test_parser_given_parenthesised_arethmatic_expression_expect_un_grouped_arethmatic_expression_ast_with_correct_prededence(self):
+    def test_parser_given_parenthesised_arithmetic_expression_expect_un_grouped_arithmetic_expression_ast_with_correct_prededence(self):
         cases = [
             ("(0)", self._helper.lexicomb_ioc.real_number_factory_provider("0")),
             ("((925.32))", self._helper.lexicomb_ioc.real_number_factory_provider("925.32")),
-            ("(1 + 42)", self._create_arethmatic_binary_operator("+", "1", "42")),
-            ("(1 + 42) * 3", self._create_arethmatic_binary_operator("*",
-                                                                     self._create_arethmatic_binary_operator("+", "1", "42"), "3")),
-            ("(1 / 42) - 3", self._create_arethmatic_binary_operator("-",
-                                                                     self._create_arethmatic_binary_operator("/", "1", "42"), "3")),
-            ("3 / (1 - 42)", self._create_arethmatic_binary_operator("/",
-                                                                     "3", self._create_arethmatic_binary_operator("-", "1", "42"))),
-            ("(3-42) * (1 + 42)", self._create_arethmatic_binary_operator(
-                "*", self._create_arethmatic_binary_operator(
-                    "-", "3", "42"), self._create_arethmatic_binary_operator(
+            ("(1 + 42)", self._create_arithmetic_binary_operator("+", "1", "42")),
+            ("(1 + 42) * 3", self._create_arithmetic_binary_operator("*",
+                                                                     self._create_arithmetic_binary_operator("+", "1", "42"), "3")),
+            ("(1 / 42) - 3", self._create_arithmetic_binary_operator("-",
+                                                                     self._create_arithmetic_binary_operator("/", "1", "42"), "3")),
+            ("3 / (1 - 42)", self._create_arithmetic_binary_operator("/",
+                                                                     "3", self._create_arithmetic_binary_operator("-", "1", "42"))),
+            ("(3-42) * (1 + 42)", self._create_arithmetic_binary_operator(
+                "*", self._create_arithmetic_binary_operator(
+                    "-", "3", "42"), self._create_arithmetic_binary_operator(
                         "+", "1", "42"))),
-            ("10 / (2 * (1 + 42)) * (3 + 9)", self._create_arethmatic_binary_operator(
-                "*", self._create_arethmatic_binary_operator(
-                    "/", "10", self._create_arethmatic_binary_operator(
-                        "*", "2", self._create_arethmatic_binary_operator(
+            ("10 / (2 * (1 + 42)) * (3 + 9)", self._create_arithmetic_binary_operator(
+                "*", self._create_arithmetic_binary_operator(
+                    "/", "10", self._create_arithmetic_binary_operator(
+                        "*", "2", self._create_arithmetic_binary_operator(
                             "+", "1", "42"))),
-                self._create_arethmatic_binary_operator(
+                self._create_arithmetic_binary_operator(
                     "+", "3", "9")))
         ]
 
-        self._evaluate(self._helper.lexicomb_parser.arethmatic_expression, cases)
+        self._evaluate(self._helper.lexicomb_parser.arithmetic_expression, cases)
 
     def test_parser_gven_relational_expression_expect_relational_expression_ast(self):
         cases = [
@@ -313,32 +313,32 @@ class TestParser(unittest.TestCase):
 
         self._evaluate(self._helper.lexicomb_parser.logical_expression, cases)
 
-    def test_parser_gven_mixed_arethmatic_logical_expression_expect_expression_with_correct_precedence(self):
+    def test_parser_gven_mixed_arithmetic_logical_expression_expect_expression_with_correct_precedence(self):
         cases = [
             ("2 + 4 > 4", self._create_relational_binary_operator(">",
-                                                                  self._create_arethmatic_binary_operator("+", "2", "4"), "4")),
+                                                                  self._create_arithmetic_binary_operator("+", "2", "4"), "4")),
             ("4 > 4 - 2", self._create_relational_binary_operator(">", "4",
-                                                                  self._create_arethmatic_binary_operator("-", "4", "2"))),
+                                                                  self._create_arithmetic_binary_operator("-", "4", "2"))),
             ("4 > 5 / (4-2)", self._create_relational_binary_operator(
-                ">", "4", self._create_arethmatic_binary_operator(
-                    "/", "5", self._create_arethmatic_binary_operator(
+                ">", "4", self._create_arithmetic_binary_operator(
+                    "/", "5", self._create_arithmetic_binary_operator(
                         "-", "4", "2")))),
             ("1 + 1 * 4 > 5", self._create_relational_binary_operator(
-                ">", self._create_arethmatic_binary_operator(
-                    "+", "1", self._create_arethmatic_binary_operator(
+                ">", self._create_arithmetic_binary_operator(
+                    "+", "1", self._create_arithmetic_binary_operator(
                         "*", "1", "4")),
                 "5")),
             ("!(1 * 4 > (5+2) / 1) || !(2 / 3 + 1 <= 1)", self._create_logical_binary_operator(
                 "||", self._create_unary_operator(
                     "!", self._create_relational_binary_operator(
-                        ">", self._create_arethmatic_binary_operator(
-                            "*", "1", "4"), self._create_arethmatic_binary_operator(
-                                "/", self._create_arethmatic_binary_operator(
+                        ">", self._create_arithmetic_binary_operator(
+                            "*", "1", "4"), self._create_arithmetic_binary_operator(
+                                "/", self._create_arithmetic_binary_operator(
                                     "+", "5", "2"),
                                 "1"))), self._create_unary_operator(
                                     "!", self._create_relational_binary_operator(
-                                        "<=", self._create_arethmatic_binary_operator(
-                                            "+", self._create_arethmatic_binary_operator(
+                                        "<=", self._create_arithmetic_binary_operator(
+                                            "+", self._create_arithmetic_binary_operator(
                                                 "/", "2", "3"),
                                             "1"),
                                         "1")))),
@@ -351,7 +351,7 @@ class TestParser(unittest.TestCase):
         cases = [
             ("x := 5;", self._create_assignment_statement("x", self._create_real_number("5"))),
             ("x := y + 2;", self._create_assignment_statement("x",
-                                                              self._create_arethmatic_binary_operator("+", self._create_term("y"), "2")))
+                                                              self._create_arithmetic_binary_operator("+", self._create_term("y"), "2")))
         ]
 
         self._evaluate(self._helper.lexicomb_parser.assignment_statement, cases)
@@ -380,7 +380,7 @@ class TestParser(unittest.TestCase):
                 "5")), self._create_assignment_statement("y", self._create_real_number("2"))]),
             ("x := 5; y := 2; not_valid := 5", [self._create_assignment_statement("x", self._create_real_number(
                 "5")), self._create_assignment_statement("y", self._create_real_number("2"))]),
-            ("x := 1 + 2;", [self._create_assignment_statement("x", self._create_arethmatic_binary_operator(
+            ("x := 1 + 2;", [self._create_assignment_statement("x", self._create_arithmetic_binary_operator(
                 "+", self._create_real_number("1"), self._create_real_number("2")))]),
             ("x := 1 < 2;", [self._create_assignment_statement("x", self._create_relational_binary_operator(
                 "<", self._create_real_number("1"), self._create_real_number("2")))]),
@@ -433,7 +433,7 @@ class TestParser(unittest.TestCase):
     def test_conditional_repeat_block(self):
         cases = [
             ("@? x < 2 { x := x + 1; }", self._create_conditional_repeat_block(self._create_relational_binary_operator("<", "x", "2"),
-                                                                               self._create_statement_block([self._create_assignment_statement("x", self._create_arethmatic_binary_operator("+", "x", "1"))]))),
+                                                                               self._create_statement_block([self._create_assignment_statement("x", self._create_arithmetic_binary_operator("+", "x", "1"))]))),
             ("@? 1 < 2 { x := 1; } { x := 2; }", self._create_conditional_repeat_block(self._create_relational_binary_operator("<", "1", "2"), self._create_statement_block(
                 [self._create_assignment_statement("x", "1")]), self._create_statement_block([self._create_assignment_statement("x", "2")]))),
             ("@? 1 < 2 { x := 1; }? 2 < 3 { y := 3; }", self._create_conditional_repeat_block(self._create_relational_binary_operator("<", "1", "2"), self._create_statement_block([self._create_assignment_statement(
@@ -477,15 +477,15 @@ class TestParser(unittest.TestCase):
             """, self._create_statement_block([
                 self._create_assignment_statement("x", "1"),
                 self._create_assignment_statement(
-                    "y", self._create_arethmatic_binary_operator("+", "x", "1")),
+                    "y", self._create_arithmetic_binary_operator("+", "x", "1")),
                 self._create_conditional_block(self._create_relational_binary_operator("=", "y", "x"),
                                                self._create_statement_block([
                                                    self._create_assignment_statement(
-                                                       "y", self._create_arethmatic_binary_operator("*", "y", "x"))
+                                                       "y", self._create_arithmetic_binary_operator("*", "y", "x"))
                                                ]),
                                                self._create_statement_block([
                                                    self._create_assignment_statement(
-                                                       "x", self._create_arethmatic_binary_operator("/", "x", "y"))
+                                                       "x", self._create_arithmetic_binary_operator("/", "x", "y"))
                                                ]))
             ])),
             ("""
@@ -501,15 +501,15 @@ class TestParser(unittest.TestCase):
             """, self._create_statement_block([
                 self._create_assignment_statement("x", "1"),
                 self._create_assignment_statement(
-                    "y", self._create_arethmatic_binary_operator("+", "x", "1")),
+                    "y", self._create_arithmetic_binary_operator("+", "x", "1")),
                 self._create_conditional_repeat_block(self._create_relational_binary_operator("=", "y", "x"),
                                                       self._create_statement_block([
                                                           self._create_assignment_statement(
-                                                              "y", self._create_arethmatic_binary_operator("*", "y", "x"))
+                                                              "y", self._create_arithmetic_binary_operator("*", "y", "x"))
                                                       ]),
                                                       self._create_statement_block([
                                                           self._create_assignment_statement(
-                                                              "x", self._create_arethmatic_binary_operator("/", "x", "y"))
+                                                              "x", self._create_arithmetic_binary_operator("/", "x", "y"))
                                                       ]))
             ])),
             ("""
@@ -533,24 +533,24 @@ class TestParser(unittest.TestCase):
             """, self._create_statement_block([
                 self._create_assignment_statement("x", "1"),
                 self._create_assignment_statement(
-                    "y", self._create_arethmatic_binary_operator("+", "x", "1")),
+                    "y", self._create_arithmetic_binary_operator("+", "x", "1")),
                 self._create_conditional_repeat_block(self._create_relational_binary_operator("=", "y", "x"),
                                                       self._create_statement_block([
                                                           self._create_assignment_statement(
-                                                              "y", self._create_arethmatic_binary_operator("*", "y", "x"))
+                                                              "y", self._create_arithmetic_binary_operator("*", "y", "x"))
                                                       ]),
                                                       self._create_statement_block([
                                                           self._create_assignment_statement(
-                                                              "x", self._create_arethmatic_binary_operator("/", "x", "y"))
+                                                              "x", self._create_arithmetic_binary_operator("/", "x", "y"))
                                                       ])),
                 self._create_conditional_block(self._create_relational_binary_operator("=", "y", "x"),
                                                self._create_statement_block([
                                                    self._create_assignment_statement(
-                                                       "y", self._create_arethmatic_binary_operator("*", "y", "x"))
+                                                       "y", self._create_arithmetic_binary_operator("*", "y", "x"))
                                                ]),
                                                self._create_statement_block([
                                                    self._create_assignment_statement(
-                                                       "x", self._create_arethmatic_binary_operator("/", "x", "y"))
+                                                       "x", self._create_arithmetic_binary_operator("/", "x", "y"))
                                                ]))
             ])),
             ("""
@@ -573,24 +573,24 @@ class TestParser(unittest.TestCase):
             """, self._create_statement_block([
                 self._create_assignment_statement("x", "1"),
                 self._create_assignment_statement(
-                    "y", self._create_arethmatic_binary_operator("+", "x", "1")),
+                    "y", self._create_arithmetic_binary_operator("+", "x", "1")),
                 self._create_conditional_block(self._create_relational_binary_operator("=", "y", "x"),
                                                self._create_statement_block([
                                                    self._create_assignment_statement(
-                                                       "y", self._create_arethmatic_binary_operator("*", "y", "x"))
+                                                       "y", self._create_arithmetic_binary_operator("*", "y", "x"))
                                                ]),
                                                self._create_statement_block([
                                                    self._create_assignment_statement(
-                                                       "x", self._create_arethmatic_binary_operator("/", "x", "y"))
+                                                       "x", self._create_arithmetic_binary_operator("/", "x", "y"))
                                                ])),
                 self._create_conditional_repeat_block(self._create_relational_binary_operator("=", "y", "x"),
                                                       self._create_statement_block([
                                                           self._create_assignment_statement(
-                                                              "y", self._create_arethmatic_binary_operator("*", "y", "x"))
+                                                              "y", self._create_arithmetic_binary_operator("*", "y", "x"))
                                                       ]),
                                                       self._create_statement_block([
                                                           self._create_assignment_statement(
-                                                              "x", self._create_arethmatic_binary_operator("/", "x", "y"))
+                                                              "x", self._create_arithmetic_binary_operator("/", "x", "y"))
                                                       ]))
             ])),
 
@@ -611,9 +611,9 @@ class TestParser(unittest.TestCase):
               x := 5;
               y := 10;
               Athlete Trevor;
-              Excercise Log Trevor x pushups;
+              Exercise Log Trevor x pushups;
               ? y > 5 {
-                Excercise
+                Exercise
                 Log Trevor
                 y
                 situps;
@@ -623,9 +623,9 @@ class TestParser(unittest.TestCase):
                 self._create_assignment_statement("x", "5"),
                 self._create_assignment_statement("y", "10"),
                 self._create_tag_statement("Athlete", ["Trevor"]),
-                self._create_tag_statement("Excercise", ["Log",  "Trevor", "x", "pushups"]),
+                self._create_tag_statement("Exercise", ["Log",  "Trevor", "x", "pushups"]),
                 self._create_conditional_block(self._create_relational_binary_operator(
-                    ">", "y", "5"), self._create_statement_block([self._create_tag_statement("Excercise", ["Log",  "Trevor", "y", "situps"])]))
+                    ">", "y", "5"), self._create_statement_block([self._create_tag_statement("Exercise", ["Log",  "Trevor", "y", "situps"])]))
             ]))
         ]
         self._evaluate(self._helper.lexicomb_parser, cases)
@@ -667,12 +667,12 @@ class TestParser(unittest.TestCase):
 
             ("""{
               Register Nichola Wilson;
-              Excercise Nichola situps 10 07:15 07:45;
-              Excercise Nichola situps 10 07:05 07:35;
-              Excercise Nichola situps 10 07:00 07:15;
-              Excercise Nichola pushups 20 07:00 07:15;
+              Exercise Nichola situps 10 07:15 07:45;
+              Exercise Nichola situps 10 07:05 07:35;
+              Exercise Nichola situps 10 07:00 07:15;
+              Exercise Nichola pushups 20 07:00 07:15;
             }
-            """, self._create_result({'Register': {'Nichola': {}}, 'Excercise': {'Nichola': {'situps': {'0': 3, '1': 30, '2': 1.25, '3': 0.4166666666666667}, 'pushups': {'0': 1, '1': 20, '2': 0.25, '3': 0.25}}}})),
+            """, self._create_result({'Register': {'Nichola': {}}, 'Exercise': {'Nichola': {'situps': {'0': 3, '1': 30, '2': 1.25, '3': 0.4166666666666667}, 'pushups': {'0': 1, '1': 20, '2': 0.25, '3': 0.25}}}})),
 
         ]
 
@@ -882,10 +882,10 @@ class TestParser(unittest.TestCase):
 
             ("""{
               Register Nichola Wilson;
-              Excercise Nichola situps 10 07:15 07:45;
-              Excercise Nichola situps 10 07:05 07:35;
-              Excercise Nichola situps 10 07:00 07:15;
-              Excercise Nichola pushups 20 07:00 07:15;
+              Exercise Nichola situps 10 07:15 07:45;
+              Exercise Nichola situps 10 07:05 07:35;
+              Exercise Nichola situps 10 07:00 07:15;
+              Exercise Nichola pushups 20 07:00 07:15;
             }
             """, None),
 
@@ -1283,13 +1283,13 @@ class TestParser(unittest.TestCase):
 
         return term
 
-    def _create_arethmatic_binary_operator(self, operator, lhs, rhs):
+    def _create_arithmetic_binary_operator(self, operator, lhs, rhs):
         lhs = self._create_term(lhs)
         rhs = self._create_term(rhs)
 
         operator = self._helper.create_operator_enum(operator)
 
-        return self._helper.lexicomb_ioc.arethmatic_binary_operator_provider(operator)(lhs, rhs)
+        return self._helper.lexicomb_ioc.arithmetic_binary_operator_provider(operator)(lhs, rhs)
 
     def _create_relational_binary_operator(self, operator, lhs, rhs):
         lhs = self._create_term(lhs)

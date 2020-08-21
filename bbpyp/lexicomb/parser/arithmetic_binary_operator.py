@@ -2,7 +2,7 @@ from bbpyp.lexicomb.parser.binary_operator import BinaryOperator
 from bbpyp.lexicomb.parser.model.operator_enum import OperatorEnum
 
 
-class ArethmaticBinaryOperator(BinaryOperator):
+class ArithmeticBinaryOperator(BinaryOperator):
     BLANK_SPACE_SENTINEL = None
 
     def __init__(self, operator, real_number_factory, string_factory, *args, **kwargs):
@@ -18,21 +18,21 @@ class ArethmaticBinaryOperator(BinaryOperator):
         rhs_value = self.rhs.eval(frame)
 
         value = None
-        if self.operator.value == OperatorEnum.ARETHMATIC_ADDITION.value:
+        if self.operator.value == OperatorEnum.ARITHMETIC_ADDITION.value:
 
             try:
-                lhs_value = " " if lhs_value == ArethmaticBinaryOperator.BLANK_SPACE_SENTINEL else lhs_value
-                rhs_value = " " if rhs_value == ArethmaticBinaryOperator.BLANK_SPACE_SENTINEL else rhs_value
+                lhs_value = " " if lhs_value == ArithmeticBinaryOperator.BLANK_SPACE_SENTINEL else lhs_value
+                rhs_value = " " if rhs_value == ArithmeticBinaryOperator.BLANK_SPACE_SENTINEL else rhs_value
 
                 value = lhs_value + rhs_value
             except TypeError:
                 value = f"{lhs_value}{rhs_value}"
 
-        elif self.operator.value == OperatorEnum.ARETHMATIC_SUBTRACTION.value:
+        elif self.operator.value == OperatorEnum.ARITHMETIC_SUBTRACTION.value:
             value = lhs_value - rhs_value
-        elif self.operator.value == OperatorEnum.ARETHMATIC_MULTIPLICATION.value:
+        elif self.operator.value == OperatorEnum.ARITHMETIC_MULTIPLICATION.value:
             value = lhs_value * rhs_value
-        elif self.operator.value == OperatorEnum.ARETHMATIC_DIVISION.value:
+        elif self.operator.value == OperatorEnum.ARITHMETIC_DIVISION.value:
             value = lhs_value / rhs_value
 
         try:

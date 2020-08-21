@@ -18,14 +18,14 @@ class OperatorEnum(Enum):
     RELATIONAL_GT_OR_EQ = ">="
     RELATIONAL_NOT_EQ = "!="
 
-    ARETHMATIC_ADDITION = "+"
-    ARETHMATIC_SUBTRACTION = "-"
+    ARITHMETIC_ADDITION = "+"
+    ARITHMETIC_SUBTRACTION = "-"
 
-    ARETHMATIC_MULTIPLICATION = "*"
-    ARETHMATIC_DIVISION = "/"
+    ARITHMETIC_MULTIPLICATION = "*"
+    ARITHMETIC_DIVISION = "/"
 
-    ARETHMATIC_NEGATIVE = "-"
-    ARETHMATIC_POSITIVE = "+"
+    ARITHMETIC_NEGATIVE = "-"
+    ARITHMETIC_POSITIVE = "+"
 
     def __str__(self):
         return self.value
@@ -43,11 +43,11 @@ class OperatorEnum(Enum):
             self._arity = ArityEnum.ONE
         elif not self._is_member_initialized("RELATIONAL_NOT_EQ"):
             self._precedence = PrecedenceLevelEnum.THREE
-        elif not self._is_member_initialized("ARETHMATIC_SUBTRACTION"):
+        elif not self._is_member_initialized("ARITHMETIC_SUBTRACTION"):
             self._precedence = PrecedenceLevelEnum.FOUR
-        elif not self._is_member_initialized("ARETHMATIC_DIVISION"):
+        elif not self._is_member_initialized("ARITHMETIC_DIVISION"):
             self._precedence = PrecedenceLevelEnum.FIVE
-        elif not self._is_member_initialized("ARETHMATIC_POSITIVE"):
+        elif not self._is_member_initialized("ARITHMETIC_POSITIVE"):
             self._precedence = PrecedenceLevelEnum.SIX
             self._arity = ArityEnum.ONE
 
