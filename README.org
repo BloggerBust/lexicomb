@@ -6,6 +6,10 @@
 * Introduction
 Lexicomb is a keyword-driven interpreted programming language. The word /Lexicomb/ is the contraction of the word /lexical/, meaning content word, and /combinator/, meaning that which combines. The Lexicomb interpreter is composed of a lexical analyzer and a parser combinator.
 
+* Related Projects
+** [[https://github.com/BloggerBust/bbpyp][BbPyP]]
+#+INCLUDE: "~/dev/bbpyp/README.org::Introduction" :only-contents t
+
 * Language Specification
 Lexicomb source code has two representations: [[*Tag Stream][Tag Stream]] and [[*Lexicon Script][Lexicon script]]. Lexicon script is kept in a file with the extension /ls/ and saved in a directory that may contain many such files. All such files, taken together, constitute the lexicon. The name of the file becomes the first tag of the tag statement, therefore file names may not contain spaces.
 
@@ -211,7 +215,9 @@ However, as seen in the EBNF, it is not possible to initialize a /hash/ value wi
 Each bbpyp namespace has a [[http://python-dependency-injector.ets-labs.org/containers/index.html][Dependency Injector IoC container]] that accepts a python dictionary named /config/.
 
 **** Logging
+
 *config Key:* logger
+
 *Is Optional:* True
 
 The ~logger~ configuration key may be set to any valid [[https://docs.python.org/3/library/logging.config.html#logging.config.dictConfig][logging dictionary configuration]]. This parameter is entirely optional.
