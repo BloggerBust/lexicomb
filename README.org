@@ -1,18 +1,337 @@
 #+TITLE: Blogger Bust Python Project: Lexicomb
 #+AUTHOR: BloggerBust
-#+DESCRIPTION: A place for me to store python code that I might want to blog about
+#+DESCRIPTION: A keyword-driven interpreted programming language
 #+STARTUP: showeverything
 
 * Introduction
-I will be adding some details here soon...
+Lexicomb is a keyword-driven interpreted programming language. The word /Lexicomb/ is the contraction of the word /lexical/, meaning content word, and /combinator/, meaning that which combines. The Lexicomb interpreter is composed of a lexical analyzer and a parser combinator.
+
+* Language Specification
+Lexicomb source code has two representations: [[*Tag Stream][Tag Stream]] and [[*Lexicon Script][Lexicon script]]. Lexicon script is kept in a file with the extension /ls/ and saved in a directory that may contain many such files. All such files, taken together, constitute the lexicon. The name of the file becomes the first tag of the tag statement, therefore file names may not contain spaces.
+
+** W3C EBNF (Extended Backus-Naur Form) Reference
+I have adopted the use of the [[https://www.w3.org/TR/xml/#sec-notation][W3C standard notation for EBNF]]. Initially, I was using the =ISO/IEC 14977= EBNF standard as described by Wikipedia's [[https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form][Extended Backus-Naur form]] page, but I found the W3C standard notation to be more compact thanks to its use of bracket expressions. Having said that, it is my opinion that Wikipedia did a better job of explaining the =ISO/IEC 14977= notation. I particularly liked that the Wikipedia page organized reserved syntax in [[https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form?#Table_of_symbols][a table of symbols]] for quick reference. 
+
+** Tag Stream
+A Tag stream is a list of [[*Tag Statements][Tag Statements]] delimited by line endings.
+
+** Tag Statements
+Tag statements are intended to take on the imperative mood with least verbosity. That is, they should have the form of a terse instruction. Here are some examples:
+#+begin_verse
+Register John
+Register Sally
+
+Exercise John situps 45 07:05 07:12
+Exercise Sally pushups 25 07:05 07:10
+#+end_verse
+
+If a single word is not enough to describe the tag, then multiple words may be combined in Pascal case.
+#+begin_example
+CreateString Combine each tag argument with a single space and return the result
+#+end_example
+
+*** EBNF production rules
+#+begin_src 
+tag_statement ::= tag space argument_list
+argument ::= ( char | digit )+ | real
+argument_list ::= argument_list space argument | argument ( delimiter argument )*
+tag ::=  char ( char | digit )*
+real ::= digit+ ( '.' digit+ )?
+char ::= [_a-zA-Z]
+digit ::= [0-9]
+space ::= [ ] =/*a single white space/*=
+delimiter ::= [:]
+#+end_src
+
+** Lexicon Script
+Lexicon script has a simple grammar. The only literal is of type /real/ and includes both int and float types. Neither String nor Boolean types can be represented literally, but both may be created indirectly. Hash statements must be declared explicitly, but have no generalized literal representation. In short, the language directly supports basic arithmetic and logical expressions. Control flow is achieved via /conditional_statement/, /conditional_repeat/ and /tag_statement/.
+*** EBNF production rules
+#+begin_src 
+/* The following identifiers are inherited from the EBNF production rules for Tag Statements:
+   - tag_statement
+   - char
+   - digit
+   - real
+*/
+
+block ::= { statement_list? }
+
+/* compound statement */
+statement_list ::= statement_list ';' statement | statement
+
+conditional_statement ::= '?' logical_expression block conditional_statement | '?' logical_expression block block | '?' logical_expression block
+
+/* while any logical_expression in the conditional_statement tree is truthy, repeat the evaluation of the conditional_statement */
+conditional_repeat ::= '@' conditional_statement 
+
+statement ::= name ':=' expression ';'
+    | name ':=' hash ';'
+    | tag_statement ';' /* see EBNF production rules for tag statements */
+    | conditional_statement
+    | conditional_repeat
+
+logical_expression ::= logical_expression '&&' relational_expression
+    | logical_expression '||' relational_expression
+    | '!' logical_expression | relational_expression
+
+relational_expression ::= arithmetic_expression '<' arithmetic_expression
+    | arithmetic_expression '<=' arithmetic_expression
+    | arithmetic_expression '=' arithmetic_expression
+    | arithmetic_expression '>' arithmetic_expression
+    | arithmetic_expression '>=' arithmetic_expression
+
+arithmetic_expression ::= expression '+' term
+    | expression '-' term
+    | term
+
+expression ::= logical_expression | arithmetic_expression
+
+term ::= term '*' factor
+    | term '/' factor
+    | factor
+
+factor ::= name | real | expression
+
+accessor ::= '[' name ']' | '[' real ']'
+access ::= name accessor*
+existence ::= '[' access ']' =/* truthy if access is successful, falsy otherwise /*=
+
+hash ::= '{' '}'
+name ::= char ( char | digit )*
+#+end_src
+
+*** Examples
+
+**** Accessing arguments
+Arguments that are passed to a tag are named ~arg~ followed immediately by their 0 based positional value. They may also be collectively accessed via the ~args~ /name/. For example, if ~MyTag~ is called with three values.
+#+begin_example
+  MyTag First second 3
+#+end_example
+
+Then from within the tag definition those arguments may be accessed by their /name/ as follows:
+#+begin_example
+{
+  first_argument := arg0;
+  second_argument := arg1;
+  third_argument := arg2;
+}
+#+end_example
+
+Or they may be accessed using the ~args~ /name/:
+#+begin_example
+{
+  first_argument := args[0];
+  second_argument := args[1];
+  third_argument := args[2];
+}
+#+end_example
+
+The access operator is safe to use at an arbitrary depth, without having to perform existence checks at each depth.
+#+begin_src
+{
+    has_arg0 := [arg0];
+    has_arg1 := [arg1];
+    is_arg1_undefined := ![arg1];
+    does_arg0_have_deep_property := [arg0[property][deep_property]];
+}
+#+end_src
+
+**** Create negative value
+There are no unary operators specified in the EBNF. That does not limit us from creating negative numbers, or from changing the sign of a numeric value.
+
+=ChangeSign.ls:=
+#+INCLUDE: "test_integration/lexicomb/lexicon/ChangeSign.ls" example
+
+#+begin_example
+{
+  x:= ChangeSign 5;
+  y:= ChangeSign x;
+  return CreateString first is x and second is y;
+}
+#+end_example
+
+**** Create String
+Strings can be created by concatenating one or more /name/ and /real/ types.
+
+=CreateString.ls:=
+#+INCLUDE: "test_integration/lexicomb/lexicon/CreateString.ls" example
+
+The ~CreateString~ tag may be used to create a string of at least length one with a single space separating each word.
+#+begin_example
+{
+  my_string := CreateString This is one way to create a string 1 2 3 4;
+  my_string_with_a_single_leading_number := CreateString 1 2 3 leading numbers will be summed;
+}
+#+end_example
+
+**** Create Boolean
+Logical expressions resolve to a ~True~ or ~False~ value. If that value is assigned to a /name/, then the result is a named boolean value that can be used in control-flow or returned as a result
+
+=CreateBoolean.ls:=
+#+INCLUDE: "test_integration/lexicomb/lexicon/CreateBoolean.ls" example
+
+#+begin_example
+{
+  true := CreateBoolean true;
+  false := CreateBoolean false;
+  amount := arg0;
+
+  ? arg1 = true {
+    amount := ChangeSign amount;
+  };
+  ? amount <= 0 {
+    return false;
+  }
+  # do stuff...
+  return true;
+}
+#+end_example
+
+**** Create hash
+A new and empty /hash/ value can be assigned to a /name/.
+
+#+begin_example
+{
+  my_hash := {};
+}
+#+end_example
+
+However, as seen in the EBNF, it is not possible to initialize a /hash/ value with a set of key value pairs. A ~CreateHash~ tag can be used to encapsulate /hash/ initialization.
+
+=CreateHash.ls:=
+#+INCLUDE: "test_integration/lexicomb/lexicon/CreateHash.ls" example
+
+#+begin_example
+  return CreateHash first_name:John last_name:Doe age:99;
+#+end_example
+
+** Lexicomb Engine
+
+*** Configuration
+Each bbpyp namespace has a [[http://python-dependency-injector.ets-labs.org/containers/index.html][Dependency Injector IoC container]] that accepts a python dictionary named /config/.
+
+**** Logging
+*config Key:* logger
+*Is Optional:* True
+
+The ~logger~ configuration key may be set to any valid [[https://docs.python.org/3/library/logging.config.html#logging.config.dictConfig][logging dictionary configuration]]. This parameter is entirely optional.
+
+There are two named loggers that can be configured:
+
+1. bbpyp.lexicomb
+2. bbpyp.lexicomb_engine
+
+*** Concurrency
+The core of the Lexicomb Engine is the [[file:bbpyp/lexicomb_engine/lexicomb_pub_sub_client.py][LexicombPubSubClient]]. The ~LexicombPubSubClient~ relays messages between Lexicomb's [[https://github.com/BloggerBust/bbpyp/blob/master/bbpyp/lexical_state_machine/lexical_state_machine.py][LexicalStateMachine]] and  [[https://github.com/BloggerBust/bbpyp/blob/master/bbpyp/interpreter_state_machine/interpreter_state_machine.py][InterpreterStateMachine]] using [[https://github.com/BloggerBust/bbpyp/blob/master/bbpyp/message_bus/model/topic_channel.py][TopicChannel]]s. The number of concurrent publish and subscribe connections opened per ~TopicChannel~ is configurable using the [[https://github.com/BloggerBust/bbpyp#message-bus][Message Bus memory_channel_topic configuration option]].
+
+There are four topic names:
+
+1. bbpyp.lexical_state_machine.lexical_analyse
+2. bbpyp.interpreter_state_machine.parse
+3. bbpyp.interpreter_state_machine.evaluate
+4. bbpyp.interpreter_state_machine.report
 
 * How to install it
+To do...
+# #+begin_src sh :results output scalar silent :shebang "#!/bin/bash" :dir ~/dev/lexicomb
+#   pip install lexicomb
+# #+end_src
 
 * Example Usage
-
-* How to setup a developer environment
+To do...
 
 * How to contribute
+I am happy to accept pull requests. If you need to get a hold of me you can [[https://github.com/BloggerBust/lexicomb/issues][create an issue]] or [[https://bloggerbust.ca/about/][email me directly]].
+
+** How to setup a developer environment
+First, [[https://github.com/login?return_to=%2FBloggerBust%2Flexicomb][fork this repository]] and clone your fork to a local dev environment.
+#+begin_src sh
+    git clone https://github.com/<your-username>/lexicomb.git
+#+end_src
+
+Next, create a venv and install the latest pip and setuptools.
+#+begin_src sh :results output silent :shebang "#!/bin/bash" :dir ~/dev
+    cd lexicomb
+    python -m venv venv
+    source venv/bin/activate
+    pip install -q --upgrade pip setuptools
+#+end_src
+
+Lastly, install the /dev/ requirements declared in [[file:dev-requirements.txt][dev-requirements.txt]] and run the unit tests.
+#+begin_src sh :results output scalar silent :shebang "#!/bin/bash" :dir ~/dev/lexicomb
+  pip install -q -r dev-requirements.txt
+  python -m unittest discover
+#+end_src
+
+#+RESULTS:
+
+#+begin_example
+......................................................
+----------------------------------------------------------------------
+Ran 54 tests in 0.716s
+
+OK
+#+end_example
+
+** Where to do your work
+Keep your mainline up to date with upstream.
+#+begin_src sh
+  git fetch origin --prune
+  git checkout master
+  git --ff-only origin/master
+#+end_src
+
+Make your changes in a feature branch.
+#+begin_src sh
+  git checkout -b branch_name
+#+end_src
+
+** Don't forget unit & integration tests
+Unit and integration tests are written using python's [[https://docs.python.org/3/library/unittest.html][unittest framework]]. The unittests use the [[https://docs.python.org/3/library/unittest.mock.html][mock library]]. Please do write both unit tests and integration tests to accommodate your contribution, except where existing tests are sufficient to cover the change.
+
+** Making commits
+Read Chris Beams excellent [[https://chris.beams.io/posts/git-commit/][article on writing commit messages]] and do your best to follow his advice.
+
+** Making a pull request
+If you feel that your changes would be appreciated upstream, then it is time to create a pull request. Please [[*Don't forget unit & integration tests][write tests]] to validate your code changes and run all the tests again before making a pull request to defend against inadvertently braking something.
+#+begin_src sh
+  python -m unittest discover
+#+end_src
+
+If you have made many intermittent commits in your feature branch, then please make a squash branch and [[https://blog.carbonfive.com/2017/08/28/always-squash-and-rebase-your-git-commits/][rebase with a single squashed commit]]. A squash branch is just a spin-off branch where you can perform the squash and rebase without the fear of corrupting your feature branch. My preference is to perform an interactive rebase. Note, that a squash branch is pointless if you only made a single commit.
+
+First switch to master and fast forward to HEAD. This will reduce the risk of having a merge conflict later.
+#+begin_src sh
+  git checkout master
+  git fetch origin --prune
+  git merge --ff-only origin/master
+#+end_src
+
+Next, switch back to your feature branch and pull any changes fetched to master. If there are conflicts, then resolve them. Be sure to run all the tests once more if you had to merge with changes from upstream.
+#+begin_src sh
+  git checkout branch_name
+  git pull origin/master
+  python -m unittest discover
+#+end_src
+
+Determine the first commit of the feature branch which will be needed during interactive rebasing.
+#+begin_src sh :results output scalar :shebang "#!/bin/bash" :dir ~/dev/test_rebase :wrap example
+  git log master..branch_name | grep -iE '^commit' | tail -n 1
+#+end_src
+
+#+RESULTS: 
+
+#+begin_example
+commit f723dcc2c154662b3d6c366fb5ad923865687796
+#+end_example
+
+Then, create a squash branch as a spin-off of the feature branch and begin the interactive rebase following [[https://blog.carbonfive.com/2017/08/28/always-squash-and-rebase-your-git-commits/][this guidance]].
+#+begin_src sh
+  git checkout -b branch_name_squash
+  git rebase -i f723dcc^
+#+end_src
+
+Now, if you make a mistake during the rebase, but don't notice until after you have already committed, all of your precious commit history remains in the feature branch. Simply reset the squash branch back to the feature branch and start again. Once you are happy with your rebase, push the squash branch to remote and [[https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request][create a pull request]].
 
 * License
 [[file:LICENSE-2.0.txt][Apache License v2.0]]
