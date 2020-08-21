@@ -44,7 +44,7 @@ delimiter ::= [:]
 #+end_src
 
 ** Lexicon Script
-Lexicon script has a simple grammar. The only literal is of type /real/ and includes both int and float types. Neither String nor Boolean types can be represented literally, but both may be created indirectly. Hash statements must be declared explicitly, but have no generalized literal representation. In short, the language directly supports basic arithmetic and logical expressions. Control flow is achieved via /conditional_statement/, /conditional_repeat/ and /tag_statement/.
+Lexicon script has a simple grammar. The only literal is of type /real/ and includes both int and float types. Neither String nor Boolean types can be represented literally, but both may be created indirectly. Hash statements must be declared explicitly, but have no generalized literal representation. In short, the language directly supports basic arithmetic and logical expressions. Control flow is achieved via /=conditional_statement=/, /=conditional_repeat=/ and /=tag_statement=/.
 *** EBNF production rules
 #+begin_src 
 /* The following identifiers are inherited from the EBNF production rules for Tag Statements:
@@ -220,18 +220,18 @@ The ~logger~ configuration key may be set to any valid [[https://docs.python.org
 
 There are two named loggers that can be configured:
 
-1. bbpyp.lexicomb
-2. bbpyp.lexicomb_engine
+1. ~bbpyp.lexicomb~
+2. ~bbpyp.lexicomb_engine~
 
 *** Concurrency
-The core of the Lexicomb Engine is the [[file:bbpyp/lexicomb_engine/lexicomb_pub_sub_client.py][LexicombPubSubClient]]. The ~LexicombPubSubClient~ relays messages between Lexicomb's [[https://github.com/BloggerBust/bbpyp/blob/master/bbpyp/lexical_state_machine/lexical_state_machine.py][LexicalStateMachine]] and  [[https://github.com/BloggerBust/bbpyp/blob/master/bbpyp/interpreter_state_machine/interpreter_state_machine.py][InterpreterStateMachine]] using [[https://github.com/BloggerBust/bbpyp/blob/master/bbpyp/message_bus/model/topic_channel.py][TopicChannel]]s. The number of concurrent publish and subscribe connections opened per ~TopicChannel~ is configurable using the [[https://github.com/BloggerBust/bbpyp#message-bus][Message Bus memory_channel_topic configuration option]].
+The core of the Lexicomb Engine is the [[file:bbpyp/lexicomb_engine/lexicomb_pub_sub_client.py][LexicombPubSubClient]]. The ~LexicombPubSubClient~ relays messages between Lexicomb's [[https://github.com/BloggerBust/bbpyp/blob/master/bbpyp/lexical_state_machine/lexical_state_machine.py][LexicalStateMachine]] and  [[https://github.com/BloggerBust/bbpyp/blob/master/bbpyp/interpreter_state_machine/interpreter_state_machine.py][InterpreterStateMachine]] using [[https://github.com/BloggerBust/bbpyp/blob/master/bbpyp/message_bus/model/topic_channel.py][TopicChannel]]s. The number of concurrent publish and subscribe connections opened per ~TopicChannel~ is configurable using the [[https://github.com/BloggerBust/bbpyp#message-bus][Message Bus ~memory_channel_topic~ configuration option]].
 
 There are four topic names:
 
-1. bbpyp.lexical_state_machine.lexical_analyse
-2. bbpyp.interpreter_state_machine.parse
-3. bbpyp.interpreter_state_machine.evaluate
-4. bbpyp.interpreter_state_machine.report
+1. ~bbpyp.lexical_state_machine.lexical_analyse~
+2. ~bbpyp.interpreter_state_machine.parse~
+3. ~bbpyp.interpreter_state_machine.evaluate~
+4. ~bbpyp.interpreter_state_machine.report~
 
 * How to install it
 To do...
