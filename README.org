@@ -6,10 +6,6 @@
 * Introduction
 Lexicomb is a keyword-driven interpreted programming language. The word /Lexicomb/ is the contraction of the word /lexical/, meaning content word, and /combinator/, meaning that which combines. The Lexicomb interpreter is composed of a lexical analyzer and a parser combinator.
 
-* Related Projects
-** [[https://github.com/BloggerBust/bbpyp][BbPyP]]
-#+INCLUDE: "../bbpyp/README.org::Introduction" :only-contents t
-
 * Language Specification
 Lexicomb source code has two representations: [[*Tag Stream][Tag Stream]] and [[*Lexicon Script][Lexicon script]]. Lexicon script is kept in a file with the extension /ls/ and saved in a directory that may contain many such files. All such files, taken together, constitute the lexicon. The name of the file becomes the first tag of the tag statement, therefore file names may not contain spaces.
 
@@ -338,6 +334,10 @@ Then, create a squash branch as a spin-off of the feature branch and begin the i
 #+end_src
 
 Now, if you make a mistake during the rebase, but don't notice until after you have already committed, all of your precious commit history remains in the feature branch. Simply reset the squash branch back to the feature branch and start again. Once you are happy with your rebase, push the squash branch to remote and [[https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request][create a pull request]].
+
+* Related Projects
+** [[https://github.com/BloggerBust/bbpyp][BbPyP]]
+#+INCLUDE: "../bbpyp/README.org::Introduction" :only-contents t
 
 * License
 [[file:LICENSE-2.0.txt][Apache License v2.0]]

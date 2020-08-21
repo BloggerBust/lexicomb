@@ -1,73 +1,61 @@
 
 # Table of Contents
 
-1.  [Introduction](#orgeca4e29)
-2.  [Related Projects](#orgb8e4ad6)
-    1.  [BbPyP](#org60b2557)
-3.  [Language Specification](#org5a98e2d)
-    1.  [W3C EBNF (Extended Backus-Naur Form) Reference](#org511ea66)
-    2.  [Tag Stream](#orgdafb751)
-    3.  [Tag Statements](#orga2abaff)
-        1.  [EBNF production rules](#orgdc081cc)
-    4.  [Lexicon Script](#org66e26c2)
-        1.  [EBNF production rules](#org740ffdc)
-        2.  [Examples](#org6302b0e)
-    5.  [Lexicomb Engine](#org643d8db)
-        1.  [Configuration](#orge67f5bf)
-        2.  [Concurrency](#org8a2b634)
-4.  [How to install it](#org45d22dc)
-5.  [Example Usage](#org2822be8)
-6.  [How to contribute](#orgd6503b5)
-    1.  [How to setup a developer environment](#orgcdd4936)
-    2.  [Where to do your work](#org3aa99b0)
-    3.  [Don't forget unit & integration tests](#org1408731)
-    4.  [Making commits](#org7f3fd2f)
-    5.  [Making a pull request](#orgbcfdb71)
-7.  [License](#org27c0cc0)
+1.  [Introduction](#orgb6ae660)
+2.  [Language Specification](#orgbf000ac)
+    1.  [W3C EBNF (Extended Backus-Naur Form) Reference](#org31c2f8e)
+    2.  [Tag Stream](#orga31c5d0)
+    3.  [Tag Statements](#org051fb49)
+        1.  [EBNF production rules](#org9e2f302)
+    4.  [Lexicon Script](#org6686532)
+        1.  [EBNF production rules](#org0090e6a)
+        2.  [Examples](#orgbdd5e88)
+    5.  [Lexicomb Engine](#org6060c6d)
+        1.  [Configuration](#org99bbb39)
+        2.  [Concurrency](#org2a5407a)
+3.  [How to install it](#org4010e91)
+4.  [Example Usage](#orgcdbb892)
+5.  [How to contribute](#org25fe8c4)
+    1.  [How to setup a developer environment](#org5361abd)
+    2.  [Where to do your work](#org5f3153d)
+    3.  [Don't forget unit & integration tests](#org35da8ea)
+    4.  [Making commits](#org2a06814)
+    5.  [Making a pull request](#orgdd88192)
+6.  [Related Projects](#orgd4ce787)
+    1.  [BbPyP](#org07c0097)
+7.  [License](#org74d7360)
 
 
 
-<a id="orgeca4e29"></a>
+<a id="orgb6ae660"></a>
 
 # Introduction
 
 Lexicomb is a keyword-driven interpreted programming language. The word *Lexicomb* is the contraction of the word *lexical*, meaning content word, and *combinator*, meaning that which combines. The Lexicomb interpreter is composed of a lexical analyzer and a parser combinator.
 
 
-<a id="orgb8e4ad6"></a>
-
-# Related Projects
-
-
-<a id="org60b2557"></a>
-
-## [BbPyP](https://github.com/BloggerBust/bbpyp)
-
-BbPyP (Blogger Bust Python Project) is a collection of python packages that I intend to use to help develop other more interesting python projects.
-
-
-<a id="org5a98e2d"></a>
+<a id="orgbf000ac"></a>
 
 # Language Specification
 
-Lexicomb source code has two representations: [Tag Stream](#orgdafb751) and [Lexicon script](#org66e26c2). Lexicon script is kept in a file with the extension *ls* and saved in a directory that may contain many such files. All such files, taken together, constitute the lexicon. The name of the file becomes the first tag of the tag statement, therefore file names may not contain spaces.
+Lexicomb source code has two representations: [Tag Stream](#orga31c5d0) and [Lexicon script](#org6686532). Lexicon script is kept in a file with the extension *ls* and saved in a directory that may contain many such files. All such files, taken together, constitute the lexicon. The name of the file becomes the first tag of the tag statement, therefore file names may not contain spaces.
 
 
-<a id="org511ea66"></a>
+<a id="org31c2f8e"></a>
 
 ## W3C EBNF (Extended Backus-Naur Form) Reference
 
 I have adopted the use of the [W3C standard notation for EBNF](https://www.w3.org/TR/xml/#sec-notation). Initially, I was using the `ISO/IEC 14977` EBNF standard as described by Wikipedia's [Extended Backus-Naur form](https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form) page, but I found the W3C standard notation to be more compact thanks to its use of bracket expressions. Having said that, it is my opinion that Wikipedia did a better job of explaining the `ISO/IEC 14977` notation. I particularly liked that the Wikipedia page organized reserved syntax in [a table of symbols](https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form?#Table_of_symbols) for quick reference. 
 
 
-<a id="orgdafb751"></a>
+<a id="orga31c5d0"></a>
 
 ## Tag Stream
 
-A Tag stream is a list of [Tag Statements](#orga2abaff) delimited by line endings.
+A Tag stream is a list of [Tag Statements](#org051fb49) delimited by line endings.
 
 
-<a id="orga2abaff"></a>
+<a id="org051fb49"></a>
 
 ## Tag Statements
 
@@ -86,7 +74,7 @@ If a single word is not enough to describe the tag, then multiple words may be c
     CreateString Combine each tag argument with a single space and return the result
 
 
-<a id="orgdc081cc"></a>
+<a id="org9e2f302"></a>
 
 ### EBNF production rules
 
@@ -101,14 +89,14 @@ If a single word is not enough to describe the tag, then multiple words may be c
     delimiter ::= [:]
 
 
-<a id="org66e26c2"></a>
+<a id="org6686532"></a>
 
 ## Lexicon Script
 
 Lexicon script has a simple grammar. The only literal is of type *real* and includes both int and float types. Neither String nor Boolean types can be represented literally, but both may be created indirectly. Hash statements must be declared explicitly, but have no generalized literal representation. In short, the language directly supports basic arithmetic and logical expressions. Control flow is achieved via *conditional<sub>statement</sub>*, *conditional<sub>repeat</sub>* and *tag<sub>statement</sub>*.
 
 
-<a id="org740ffdc"></a>
+<a id="org0090e6a"></a>
 
 ### EBNF production rules
 
@@ -165,7 +153,7 @@ Lexicon script has a simple grammar. The only literal is of type *real* and incl
     name ::= char ( char | digit )*
 
 
-<a id="org6302b0e"></a>
+<a id="orgbdd5e88"></a>
 
 ### Examples
 
@@ -303,12 +291,12 @@ Lexicon script has a simple grammar. The only literal is of type *real* and incl
         return CreateHash first_name:John last_name:Doe age:99;
 
 
-<a id="org643d8db"></a>
+<a id="org6060c6d"></a>
 
 ## Lexicomb Engine
 
 
-<a id="orge67f5bf"></a>
+<a id="org99bbb39"></a>
 
 ### Configuration
 
@@ -328,7 +316,7 @@ Each bbpyp namespace has a [Dependency Injector IoC container](http://python-dep
     2.  bbpyp.lexicomb<sub>engine</sub>
 
 
-<a id="org8a2b634"></a>
+<a id="org2a5407a"></a>
 
 ### Concurrency
 
@@ -342,28 +330,28 @@ There are four topic names:
 4.  bbpyp.interpreter<sub>state</sub><sub>machine.report</sub>
 
 
-<a id="org45d22dc"></a>
+<a id="org4010e91"></a>
 
 # How to install it
 
 To do&#x2026;
 
 
-<a id="org2822be8"></a>
+<a id="orgcdbb892"></a>
 
 # Example Usage
 
 To do&#x2026;
 
 
-<a id="orgd6503b5"></a>
+<a id="org25fe8c4"></a>
 
 # How to contribute
 
 I am happy to accept pull requests. If you need to get a hold of me you can [create an issue](https://github.com/BloggerBust/lexicomb/issues) or [email me directly](https://bloggerbust.ca/about/).
 
 
-<a id="orgcdd4936"></a>
+<a id="org5361abd"></a>
 
 ## How to setup a developer environment
 
@@ -390,7 +378,7 @@ Lastly, install the *dev* requirements declared in [dev-requirements.txt](dev-re
     OK
 
 
-<a id="org3aa99b0"></a>
+<a id="org5f3153d"></a>
 
 ## Where to do your work
 
@@ -405,25 +393,25 @@ Make your changes in a feature branch.
     git checkout -b branch_name
 
 
-<a id="org1408731"></a>
+<a id="org35da8ea"></a>
 
 ## Don't forget unit & integration tests
 
 Unit and integration tests are written using python's [unittest framework](https://docs.python.org/3/library/unittest.html). The unittests use the [mock library](https://docs.python.org/3/library/unittest.mock.html). Please do write both unit tests and integration tests to accommodate your contribution, except where existing tests are sufficient to cover the change.
 
 
-<a id="org7f3fd2f"></a>
+<a id="org2a06814"></a>
 
 ## Making commits
 
 Read Chris Beams excellent [article on writing commit messages](https://chris.beams.io/posts/git-commit/) and do your best to follow his advice.
 
 
-<a id="orgbcfdb71"></a>
+<a id="orgdd88192"></a>
 
 ## Making a pull request
 
-If you feel that your changes would be appreciated upstream, then it is time to create a pull request. Please [write tests](#org1408731) to validate your code changes and run all the tests again before making a pull request to defend against inadvertently braking something.
+If you feel that your changes would be appreciated upstream, then it is time to create a pull request. Please [write tests](#org35da8ea) to validate your code changes and run all the tests again before making a pull request to defend against inadvertently braking something.
 
     python -m unittest discover
 
@@ -455,7 +443,19 @@ Then, create a squash branch as a spin-off of the feature branch and begin the i
 Now, if you make a mistake during the rebase, but don't notice until after you have already committed, all of your precious commit history remains in the feature branch. Simply reset the squash branch back to the feature branch and start again. Once you are happy with your rebase, push the squash branch to remote and [create a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
 
 
-<a id="org27c0cc0"></a>
+<a id="orgd4ce787"></a>
+
+# Related Projects
+
+
+<a id="org07c0097"></a>
+
+## [BbPyP](https://github.com/BloggerBust/bbpyp)
+
+BbPyP (Blogger Bust Python Project) is a collection of python packages that I intend to use to help develop other more interesting python projects.
+
+
+<a id="org74d7360"></a>
 
 # License
 
